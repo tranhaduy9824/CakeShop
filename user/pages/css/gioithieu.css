@@ -1,0 +1,82 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Giới thiệu */
+.box-intro {
+    color: white;
+    margin: 60px 0;
+}
+
+.box-intro .img-intro img {
+    width: 100%;
+}
+
+.box-intro .content-intro {
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 60px;
+}
+
+.box-intro .content-intro h1 {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.box-intro .content-intro h1 + img {
+    width: 200px;
+    margin-bottom: 20px;
+}
+
+.box-intro .content-intro p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.box-intro .content-intro p + img {
+    margin-left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.box-intro .content-intro > div {
+    display: flex;
+    justify-content: center;
+}
+
+.box-intro .content-intro > div img {
+    margin: 20px;
+    width: 300px;
+    height: 508px;
+}
+
+/* Mobile */
+@media screen and (max-width: 46.1875em) {
+    .box-intro .content-intro p + img {
+        width: 300px;
+    }
+
+    .box-intro .content-intro > div img {
+        width: 150px;
+        height: 280px;
+    }
+
+    .box-intro .content-intro {
+        width: auto;
+        margin-left: 0;
+        padding: 0 20px;
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 46.25em) and (max-width: 63.9375em) {
+    
+}

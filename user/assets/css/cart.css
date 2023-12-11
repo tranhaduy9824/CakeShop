@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Cart */
+#cart .box-cart {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    background-color: white;
+    z-index: 3;
+    color: black;
+    padding: 15px;
+    border-radius: 10px 0 0 10px;
+    height: 400px;
+    width: 330px;
+    overflow-y: auto;
+    display: none;
+}
+
+#cart .box-cart.open {
+    display: block;
+}
+
+#cart .box-cart > p {
+    margin: 30px 0 10px 0;
+}
+
+#cart .box-cart > .buysp {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background-color: black;
+    padding: 20px 0;
+    opacity: 0.8;
+}
+
+#cart .box-cart > .buysp a{
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+}
+
+#cart .box-cart > .buysp:hover {
+    opacity: 1;
+}
+
+#cart .box-cart .top-cart {
+    height: 250px;
+    overflow-y: auto;
+}
+
+#cart .box-cart .item-cart {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-top: 30px;
+}
+
+#cart .box-cart .item-cart img {
+    width: 120px;
+    margin-right: 10px;
+}
+
+#cart .box-cart .item-cart p {
+    margin: 4px 0;
+}
+
+#cart .box-cart .item-cart p:nth-child(1) {
+    color: aqua;
+    font-size: 20px;
+}
+
+#cart .box-cart .bottom-cart {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+}
+
+#cart .box-cart .total-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+}
+
+#cart .box-cart .total-cart p {
+    margin: 0;
+}
+
+#cart .box-cart .total-cart p:nth-child(2) {
+    color: green;
+    font-size: 22px;
+}
+
+#cart .box-cart .btn-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#cart .box-cart .btn-item .btn-detail {
+    padding: 10px;
+    text-transform: uppercase;
+    border: 2px solid black;
+    opacity: 0.8;
+}
+
+#cart .box-cart .btn-item .btn-pay {
+    padding: 10px;
+    text-transform: uppercase;
+    background-color: black;
+    color: white;
+    border: 2px solid black;
+    opacity: 0.8;
+}
+
+#cart .box-cart .btn-item > div:hover {
+    opacity: 1;
+    cursor: pointer;
+}

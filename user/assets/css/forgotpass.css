@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Menu */
+#menu .menu-right .user {
+    border: none;
+}
+
+#menu .menu-right .user {
+    background-color: red;
+}
+
+#menu .menu-right a {
+    color: white;
+}
+
+/* Main */
+.box-sendcode {
+    color: white;
+    margin: 100px 0;
+    width: 400px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+.box-sendcode h1 {
+    font-size: 35px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.box-sendcode label {
+    font-size: 18px;
+}
+
+.box-sendcode input[type="email"] {
+    width: 310px;
+    height: 30px;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    padding: 0 8px;
+    margin-left: 20px;
+}
+
+.box-sendcode input[type="text"] {
+    width: 100px;
+    height: 30px;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    padding: 0 8px;
+    margin-left: 20px;
+}
+
+.box-sendcode input[type="submit"] {
+    background-color: black;
+    color: white;
+    padding: 8px;
+    border: 2px solid white;  
+    margin-top: 20px;  
+    font-size: 17px;
+    opacity: 0.8;
+}
+
+.box-sendcode input[type="submit"]:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+/* Footer */
+#footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

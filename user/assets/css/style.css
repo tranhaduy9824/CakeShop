@@ -1,0 +1,873 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+@keyframes slide-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+}
+
+/* Sản phẩm mới */
+#newsp {
+    margin-top: 60px;
+    margin-bottom: 100px;
+}
+
+#newsp.animate {
+    animation: slide-in 1.5s ease-out;
+}
+
+#newsp .title{
+    margin-top: 80px;
+    margin-left: 180px;
+    font-size: 35px;
+    line-height: 45px;
+    text-transform: uppercase;
+    font-weight: normal;
+    display: block;
+    color: white;
+}
+
+#newsp > img {
+    margin-left: 180px;
+}
+
+#newsp .slider{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#newsp .slider .item {
+    width: 300px;
+}
+
+#newsp .slider .item > a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 25px;
+    line-height: 35px;
+}
+
+#newsp .slider .item .price {
+    font-size: 20px;
+    line-height: 30px;
+    color: #8ed0ff;
+    font-weight: 500;
+    margin-bottom: 15px;
+    margin-top: 20px;
+}
+
+#newsp .slider .item .link a {
+    display: inline-block;
+    color: #ffffff;
+    background: black;
+    width: 150px;
+    text-align: center;
+    padding: 9px 10px;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+#newsp .slider .img-item {
+    border-radius: 100%;
+    border: solid 10px white;
+    pointer-events: none;
+    box-sizing: content-box;
+    padding: 16px;
+}
+
+#newsp .slider .img-item img {
+    width: 800px;
+    height: 500px;
+    border-radius: 100%;
+}
+
+/* Next-pre */
+#newsp .slick-prev {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: none;
+    font-size: 30px;
+    top: 50%;
+    left: 30%;
+    transform: translateY(-50%);
+    background-color: black;
+    color: white;
+    z-index: 2;
+    padding: 8px;
+}
+
+#newsp .slick-next {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: none;
+    font-size: 30px;
+    top: 50%;
+    right: 10.5%;
+    transform: translateY(-50%);
+    background-color: black;
+    color: white;
+    z-index: 2;
+    padding: 8px;
+}
+
+/* Sản phẩm hot + mới */
+#hotnew {
+    width: 100%;
+    background-color: black;
+    padding: 100px 0;
+}
+
+#hotnew.animate {
+    animation: slide-in 1.5s linear;
+}
+
+.box-hotnew {
+    width: 80%;
+    margin-left: 10%;
+    background-color: #6c6f70;
+    padding: 20px;
+}
+
+#hotnew .menu-new-hot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#hotnew .menu-new-hot > div {
+    background-color: #6c6f70;
+    color: white;
+    padding: 9px 10px;
+    text-transform: uppercase;
+    line-height: 22px;
+    width: 145px;
+    text-align: center;
+    margin: 10px;
+    border: 2px solid black;
+}
+
+#hotnew .menu-new-hot > div:hover {
+    background-color: black;
+    cursor: pointer;
+}
+
+#hotnew .menu-new-hot .change {
+    background-color: black;
+}
+
+/* Hot */
+#hotnew .sliders-hot {
+    width: 100%;
+    margin-top: 50px;
+}
+
+#hotnew .sliders-hot.open {
+    display: none;
+}
+
+.sliders-new,
+.sliders-hot {
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+}
+
+#hotnew .sanpham {
+    position: relative;
+    height: 480px;
+    width: 20%;
+    margin: 5px;
+    border: 2px solid #6c6f70;
+}
+
+#hotnew .sanpham:hover {
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+#hotnew .sanpham:hover .link {
+    display: block;
+}
+
+#hotnew .sanpham:hover .name a {
+    color: black;
+}
+
+#hotnew .sanpham .img {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#hotnew .sanpham .img img {
+    width: 100%;
+    height: 250px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+#hotnew .sanpham .img:hover img {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.5s;
+}
+
+#hotnew .sanpham .name {
+    position: absolute;
+    top: 260px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+}
+
+#hotnew .sanpham .name a {
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+#hotnew .sanpham .des {
+    position: absolute;
+    top: 340px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 39px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.721);
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+#hotnew .sanpham .price {
+    position: absolute;
+    top: 400px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgb(136, 227, 228);
+    font-size: 18px;
+}
+
+#hotnew .sanpham .link {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 0;
+    text-align: center;
+    background-color: black;
+    border-top: 2px solid black;
+}
+
+#hotnew .sanpham .link:hover {
+    background-color: #6c6f70;
+}
+
+#hotnew .sanpham .link a{
+    color: white;
+    text-decoration: none;
+}
+
+#hotnew .sliders-hot .sanpham .ribbon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: #af0103;
+    color: white;
+    line-height: 50px;
+    border-radius: 100%;
+}
+
+/* New */
+#hotnew .sliders-new {
+    width: 100%;
+    margin-top: 50px;
+    display: none;
+}
+
+#hotnew .sliders-new.open {
+    display: block;
+}
+
+#hotnew .sliders-new .sanpham .ribbon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: #98ca4f;
+    color: white;
+    line-height: 50px;
+    border-radius: 100%;
+}
+
+/* Next-pre Hot+new */
+#hotnew .slick-prev {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: none;
+    font-size: 30px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    background-color: black;
+    color: white;
+    z-index: 2;
+    padding: 8px;
+}
+
+#hotnew .slick-next {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: none;
+    font-size: 30px;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background-color: black;
+    color: white;
+    z-index: 2;
+    padding: 8px;
+}
+
+/* PromoNews */
+.box-promonews {
+    display: flex;
+    justify-content: center;
+    color: white;
+    padding: 50px 0;
+}
+
+.box-promonews > div {
+    margin: 0 20px;
+}
+
+.box-promonews h2 {
+    text-transform: uppercase;
+    font-size: 30px;
+}
+
+.box-promonews h2 + img {
+    width: 150px;
+    margin: 15px 0;
+}
+
+.box-promonews .img{
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.box-promonews .name {
+    margin: 10px 0;
+}
+
+.box-promonews .name a {
+    font-size: 22px;
+    color: white;
+    text-decoration: none;
+}
+
+.box-promonews .des {
+    width: 570px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.721);
+}
+
+.box-promonews .news .img {
+    width: 570px;
+    height: 380px;
+}
+
+.box-promonews .mooncake .img {
+    width: 370px;
+    height: 247px;
+}
+
+.box-promonews .img img {
+    width: 100%;
+    transition: transform 0.5s;
+}
+
+.box-promonews .mooncake .img:hover img,
+.box-promonews .news .img:hover img{
+    transform: scale(1.1);
+}
+
+/* Review */
+#review {
+    background-color: black;
+    padding: 80px;
+}
+
+.box-review {
+    text-align: center;
+    color: white;
+}
+
+.box-review .title {
+    font-size: 25px;
+    line-height: 45px;
+    text-transform: uppercase;
+    font-weight: normal;
+    color: white;
+}
+
+.box-review .title img {
+    width: 200px;
+    margin: 20px 0;
+}
+
+#review .sliders-review {
+    width: 70%;
+    margin-left: 15%;
+}
+
+.avt-review .img {
+    margin: 20px;   
+}
+
+.avt-review .img img {
+    width: 100%;
+    border-radius: 100%;
+}
+
+.item-review {
+    width: 70%;
+    margin-left: 15%;
+}
+
+.item-container .name {
+    font-size: 22px;
+    color: aqua;
+    margin: 20px 0;
+} 
+
+.item-container .content {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+#review .slick-prev {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: none;
+    font-size: 30px;
+    top: 50%;
+    left: -50px;
+    transform: translateY(-50%);
+    background-color: white;
+    color: black;
+    z-index: 2;
+    padding: 8px;
+}
+
+#review .slick-next {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: none;
+    font-size: 30px;
+    top: 50%;
+    right: -50px;
+    transform: translateY(-50%);
+    background-color: white;
+    color: black;
+    z-index: 2;
+    padding: 8px;
+}
+
+/* Box comment */
+.box-comment {
+    margin: 30px;
+    width: 50%;
+    margin-left: 25%;
+}
+
+.box-comment .send-comment input[type="text"] {
+    width: 90%;
+    height: 30px;
+    font-size: 18px;
+    padding: 0 8px;
+    margin-right: 1%;
+}
+
+.box-comment .send-comment input[type="submit"] {
+    width: 8%;
+    height: 30px;
+    font-size: 18px;
+    padding: 0 8px;
+    background-color: rgb(0, 179, 255);
+    color: white;
+    opacity: 0.8;
+}
+
+.box-comment .send-comment input[type="submit"]:hover {
+    opacity: 1;
+}
+
+.box-comment .send-comment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.box-comment .send-comment .avt-comment {
+    width: 7.5%;
+    height: 50px;
+    border-radius: 100%;
+    padding: 2px;
+    background-color: white;
+}
+
+.box-comment .send-comment .avt-comment img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+
+.box-comment .send-comment .box-addcomment {
+    width: 100%;
+}
+
+.box-comment .send-comment .avt-comment + .box-addcomment {
+    width: 90%;
+}
+
+.box-comment .list-comment {
+    background-color: white;
+    margin-top: 50px;
+    height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.box-comment .list-comment p {
+    font-size: 18px;
+}
+
+.box-comment .list-comment table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+}
+
+.box-comment .list-comment table img {
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    border: 2px solid white;
+}
+
+.box-comment .list-comment table td {
+    padding: 8px;
+    background-color: black;
+    border-bottom: 3px solid white; 
+}
+
+.box-comment .list-comment table .name-comment {
+    border: none;
+    color: aqua;
+    padding: 8px 8px 0 8px;
+}
+
+.box-comment .list-comment table a {
+    color: white;
+    font-size: 18px;
+}
+
+.box-comment .list-comment table a:hover {
+    color:red;
+}
+
+.box-comment .list-comment table .time-comment {
+    color: rgba(255, 255, 255, 0.571);
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Mobile */
+@media screen and (max-width: 46.1875em) {
+    /* Main */
+    #newsp .title {
+        margin-left: 20px;
+        font-size: 30px;
+    }
+
+    #newsp .slider {
+        margin-top: 30px;
+    }
+
+    #newsp > img {
+        margin-left: 20px;
+        width: 200px;
+    }
+
+    #newsp .slider .img-item {
+        margin-right: 10px;
+    }
+
+    #newsp .slider .img-item img {
+        width: 150px;
+        height: 150px;
+    }
+
+    #newsp .slider .item {
+        margin: 0 10px;
+    }
+
+    #newsp .slick-prev {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        left: 42%;
+    }
+
+    #newsp .slick-next {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        right: 0;
+    }
+
+    #hotnew .menu-new-hot > div {
+        font-size: 16px;
+    }
+
+    #hotnew .sanpham {
+        height: 350px;
+    }
+
+    #hotnew .sanpham .name {
+        top: 180px;
+    }
+
+    #hotnew .sanpham .des {
+        top: 266px;
+    }
+
+    #hotnew .sanpham .price {
+        top: 325px;
+        font-size: 16px;    
+    }
+
+    #hotnew .sanpham .img img {
+        height: 150px;
+    }
+
+    #hotnew .sanpham .name a {
+        font-size: 15px;
+    }
+
+    #hotnew .sanpham .des {
+        font-size: 14px;
+    }
+
+    .box-promonews {
+        display: block; 
+    } 
+
+    .box-promonews > div {
+        margin: 20px;
+    }
+
+    .box-promonews .news .img {
+        width: 100%;
+        height: auto;
+    }
+
+    .box-promonews .des {
+        width: auto;
+    }
+
+    .box-promonews .mooncake .img {
+        width: 100%;
+        height: auto;
+    }
+
+    #review {
+        padding: 80px 0;
+    }
+
+    .item-review {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .item-container .content {
+        font-size: 15px;
+    }
+
+    .box-comment {
+        margin-left: 0;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .box-comment .send-comment input[type="text"] {
+        width: 84%;
+        margin-right: 0;
+    }
+
+    .box-comment .send-comment input[type="submit"] {
+        width: 14%;
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 46.25em) and (max-width: 63.9375em){
+    /* Main */
+    #newsp .title {
+        margin-left: 20px;
+        font-size: 30px;
+    }
+
+    #newsp .slider {
+        margin-top: 30px;
+    }
+
+    #newsp > img {
+        margin-left: 20px;
+        width: 200px;
+    }
+
+    #newsp .slider .img-item {
+        margin-right: 10px;
+    }
+
+    #newsp .slider .img-item img {
+        width: 300px;
+        height: 300px;
+    }
+
+    #newsp .slider .item {
+        margin: 0 10px;
+    }
+
+    #newsp .slick-prev {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        left: 44%;
+    }
+
+    #newsp .slick-next {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        right: 4%;
+    }
+
+    #hotnew .menu-new-hot > div {
+        font-size: 16px;
+    }
+
+    #hotnew .sanpham {
+        height: 350px;
+    }
+
+    #hotnew .sanpham .name {
+        top: 180px;
+    }
+
+    #hotnew .sanpham .des {
+        top: 266px;
+    }
+
+    #hotnew .sanpham .price {
+        top: 325px;
+        font-size: 16px;    
+    }
+
+    #hotnew .sanpham .img img {
+        height: 150px;
+    }
+
+    #hotnew .sanpham .name a {
+        font-size: 15px;
+    }
+
+    #hotnew .sanpham .des {
+        font-size: 14px;
+    }
+
+    .box-promonews {
+        display: block; 
+    } 
+
+    .box-promonews > div {
+        margin: 20px;
+    }
+
+    .box-promonews .news .img {
+        width: 100%;
+        height: auto;
+    }
+
+    .box-promonews .des {
+        width: auto;
+    }
+
+    .box-promonews .mooncake .img {
+        width: 100%;
+        height: auto;
+    }
+
+    #review {
+        padding: 80px 0;
+    }
+
+    .item-review {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .item-container .content {
+        font-size: 15px;
+    }
+
+    .box-comment {
+        margin-left: 0;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .box-comment .send-comment input[type="text"] {
+        width: 84%;
+        margin-right: 0;
+    }
+
+    .box-comment .send-comment input[type="submit"] {
+        width: 14%;
+    }
+}

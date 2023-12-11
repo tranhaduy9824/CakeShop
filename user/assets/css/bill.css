@@ -1,0 +1,140 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    color: white;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Menu */
+#menu .menu-right .user {
+    width: 65.5px;
+    height: 60px;
+    border: none;
+    position: relative;
+}
+
+#menu .menu-right a {
+    color: white;
+    text-decoration: none;
+}
+
+#menu .menu-right .user .box-usermenu {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+#menu .menu-right .user .box-usermenu:hover ul{
+    display: block;
+}
+
+#menu .menu-right .user ul {
+    position: absolute;
+    top: 60px;
+    left: -35px;
+    list-style-type: none;
+    width: 130px;
+    text-align: center;
+    background-color: black;
+    display: none;
+}
+
+#menu .menu-right .user ul li {
+    display: inline-block;
+    padding: 8px 0;
+} 
+
+#menu .menu-right .user ul a:hover,
+#menu .menu-right .user ul li:hover {
+    color: red;
+}
+
+#menu .menu-right .check {
+    background-color: red;
+}
+
+/* Bill */
+#bill {
+    margin-top: 60px;
+    padding: 50px 20px;
+}
+
+#bill .box-bill {
+    width: 100%;
+}
+
+#bill .box-bill h1,
+#bill .box-bill h3 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#bill .box-bill h4 {
+    margin-top: 20px;
+}
+
+#bill .box-bill .choose select {
+    padding: 8px;
+    background-color: black;
+    font-size: 16px;
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-top: 20px;
+}
+
+#bill .box-bill .show-bill {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-size: 15px;
+}
+
+#bill .box-bill .show-bill tr:first-child {
+    background-color: black;
+}
+
+#bill .box-bill .show-bill th,
+#bill .box-bill .show-bill td {
+    border: 2px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+#bill .box-bill .show-bill td:nth-child(8) {
+    padding: 0;
+}
+
+#bill .box-bill .show-bill .sub-table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#bill .box-bill .show-bill .sub-table td {
+    border: none;
+    border-bottom: 2px solid #ddd;
+}
+
+#bill .box-bill .show-bill .sub-table tr:last-child td{
+    border: none;
+}
+
+#bill .box-bill .show-bill .sub-table tr:first-child {
+    background-color: #6c6f70;
+}
+
+#bill .box-bill h3 {
+    color: rgba(0, 255, 255, 0.886);
+}
+
+#bill .box-bill h3:hover {
+    color: aqua;
+}

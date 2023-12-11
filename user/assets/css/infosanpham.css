@@ -1,0 +1,130 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Main */
+#main .box-infosp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    margin: 150px 0 100px 0;
+}
+
+#main .box-infosp .imgsp {
+    width: 35%;
+}
+
+#main .box-infosp img {
+    width: 80%;
+}
+
+#main .box-infosp .infosp {
+    width: 35%;
+}
+
+#main .box-infosp h1 {
+    text-transform: uppercase;
+    font-size: 35px;
+    font-weight: normal;
+    margin-bottom: 15px;
+    color: aqua;
+}
+
+#main .box-infosp .add-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+}
+
+#main .box-infosp .add-cart p {
+    color: aqua;
+    margin-bottom: 5px;
+}
+
+#main .box-infosp .add-cart input[type="number"] {
+    height: 30px;
+    font-size: 20px;
+    background-color: black;
+    color: white;
+    padding-left: 8px;
+}
+
+#main .box-infosp .add-cart button {
+    color: white;
+    background-color: black;
+    font-size: 18px;
+    padding: 10px;
+    border: 2px solid white;
+    opacity: 0.8;
+}
+
+#main .box-infosp .add-cart button:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+/* Mobile */
+@media screen and (max-width: 46.1875em) {
+    #main .box-infosp {
+        padding: 0 20px;
+    }
+
+    #main .box-infosp > div {
+        width: 50% !important;
+    }
+
+    #main .box-infosp .add-cart {
+        display: block;
+    }
+
+    #main .box-infosp .add-cart .price,
+    #main .box-infosp .add-cart .count {
+        line-height: 2;
+    }
+
+    #main .box-infosp .add-cart input[type="number"] {
+        width: 50px;
+    }
+
+    #main .box-infosp .add-cart button {
+        margin-top: 20px;
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 46.25em) and (max-width: 63.9375em) {
+    #main .box-infosp {
+        padding: 0 20px;
+    }
+
+    #main .box-infosp > div {
+        width: 50% !important;
+    }
+
+    #main .box-infosp .add-cart {
+        display: block;
+    }
+
+    #main .box-infosp .add-cart .price,
+    #main .box-infosp .add-cart .count {
+        line-height: 2;
+    }
+
+    #main .box-infosp .add-cart input[type="number"] {
+        width: 50px;
+    }
+
+    #main .box-infosp .add-cart button {
+        margin-top: 20px;
+    }
+}

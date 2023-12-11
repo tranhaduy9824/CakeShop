@@ -1,0 +1,114 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#menu .menu {
+    position: fixed;
+    top: 0;
+    left: 0;    
+    width: 100vw;
+    z-index: 3;
+}
+
+#menu .menu .navbar-brand {
+    font-family: Brush Script MT;
+    font-size: 30px;
+    background-image: linear-gradient(to right, rgb(255, 0, 0), rgb(255, 255, 255));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#menu .menu > nav {
+    padding: 0; 
+}
+
+#menu .menu .container-fluid {
+    background-color: black;
+    margin: 0;
+    height: 60px;
+}
+
+#menu .menu input {
+    width: 300px;
+    background-color: rgba(58, 55, 55, 0.436);
+    color: white;
+}
+
+#menu .menu button[type="submit"] {
+    border-color: red;
+    color: red;
+}
+
+#menu .menu button[type="submit"]:hover {
+    background-color: red;
+    color: white;
+}
+
+#menu .menu .navbar-toggler{
+    background-color: white;
+}
+
+#menu .menu .nav-link,
+#menu .menu .nav-item {
+    color: white;
+    font-size: 17px;
+    text-transform: uppercase;
+    border: 2px solid black;
+}
+
+#menu .menu .navbar-collapse {
+    background-color: black;
+    padding: 0 20px;
+}
+
+#menu .menu li:hover {
+    border-radius: 5px;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+#menu .menu .sub-sanpham {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#menu .menu .sub-sanpham > a:first-child {
+    margin-right: 10px;
+}
+
+#menu .menu .sub-sanpham > a {
+    text-decoration: none;
+    color: white;
+}
+
+#menu .menu .sub-sanpham > a:nth-child(2):hover {
+    color: red;
+}
+
+#menu .menu .sub-sanpham .list-sub-sanpham {
+    position: absolute;
+}
+
+#menu .menu .dropdown-menu {
+    background-color: black;
+}
+
+#menu .menu .dropdown-menu .dropdown-divider {
+    background-color: white;
+}
+
+#menu .menu .dropdown-menu .dropdown-item {
+    color: white;
+}
+
+#menu .menu .dropdown-menu li:hover {
+    background-color: white;
+}
+
+#menu .menu .dropdown-menu li:hover .dropdown-item {
+    color: black;
+}

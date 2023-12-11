@@ -1,0 +1,263 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Sản phẩm */
+#sanpham {
+    margin-top: 100px;
+    padding: 50px;
+}
+
+#sanpham .box-sanpham > h1 {
+    color: white;
+    font-size: 40px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    margin-left: 210px;
+}
+
+#sanpham .box-sanpham > img {
+    width: 150px;
+    margin-left: 210px;
+    margin-bottom: 20px;
+}
+
+#sanpham .box-sanpham .row-sanpham {
+    display: flex;
+    justify-content: center;
+}
+
+#sanpham .sanpham {
+    position: relative;
+    height: 480px;
+    width: 23%;
+    margin: 20px;
+    border: 2px solid #6c6f70;
+    text-align: center;
+    
+}
+
+#sanpham .sanpham:hover {
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+#sanpham .sanpham:hover .link {
+    display: block;
+}
+
+#sanpham .sanpham:hover .name a {
+    color: black;
+}
+
+#sanpham .sanpham .img {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#sanpham .sanpham .img img {
+    width: 100%;
+    height: 250px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+#sanpham .sanpham .img:hover img {
+    transform: scale(1.1);
+    cursor: pointer;
+    transition: transform 0.5s;
+}
+
+#sanpham .sanpham .name {
+    position: absolute;
+    top: 260px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+}
+
+#sanpham .sanpham .name a {
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+#sanpham .sanpham .des {
+    position: absolute;
+    top: 340px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 39px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.721);
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+#sanpham .sanpham .price {
+    position: absolute;
+    top: 400px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgb(136, 227, 228);
+    font-size: 18px;
+}
+
+#sanpham .sanpham .link {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 0;
+    text-align: center;
+    background-color: black;
+    border-top: 2px solid black;
+}
+
+#sanpham .sanpham .link:hover {
+    background-color: #6c6f70;
+}
+
+#sanpham .sanpham .link a{
+    color: white;
+    text-decoration: none;
+}
+
+#sanpham .sanpham .ribbon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    color: white;
+    line-height: 50px;
+    border-radius: 100%;
+    text-transform: uppercase;
+}
+
+#sanpham .sanpham .ribbon.hot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: #af0103;
+    color: white;
+    line-height: 50px;
+    border-radius: 100%;
+}
+
+#sanpham .sanpham .ribbon.new {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: #98ca4f;
+    color: white;
+    line-height: 50px;
+    border-radius: 100%;
+}
+
+#sanpham .btn-pagesp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+#sanpham .btn-pagesp .number-page {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 100%;
+    text-align: center;
+    margin: 0 5px;
+}
+
+#sanpham .btn-pagesp .number-page:hover a,
+#sanpham .btn-pagesp .number-page:hover {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+}
+
+#sanpham .btn-pagesp .number-page a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Mobile */
+@media screen and (max-width: 46.1875em) {
+    #sanpham {
+        margin-top: 70px;
+        padding: 50px 0;
+    }
+
+    #sanpham .box-sanpham > h1 {
+        margin-left: 0;
+    }
+
+    #sanpham .box-sanpham > img {
+        margin-left: 0;
+    }
+
+    #sanpham .sanpham {
+        height: 400px;
+        width: 33%;
+        margin: 5px;
+    }
+
+    #sanpham .sanpham .img img {
+        height: 150px;
+    }
+
+    #sanpham .sanpham .name {
+        top: 150px;
+    }
+
+    #sanpham .sanpham .name a {
+        font-size: 13px;
+    }
+
+    #sanpham .sanpham .des {
+        top: 270px;
+        font-size: 12px;
+        height: 60px;
+    }
+
+    #sanpham .sanpham .price {
+        top: 345px;
+    }
+
+    #sanpham .sanpham .ribbon.hot,
+    #sanpham .sanpham .ribbon.new {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 13px;
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 46.25em) and (max-width: 63.9375em) {
+    #sanpham {
+        padding: 50px 0;
+    }
+}

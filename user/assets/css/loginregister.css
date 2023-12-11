@@ -1,0 +1,206 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Main */
+#btnchange {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 70px;
+}
+
+#btnchange > div {
+    padding: 12px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    margin: 10px;
+    text-transform: uppercase;
+}
+
+#btnchange > div:hover {
+    color: red;
+    cursor: pointer;
+}
+
+#btnchange > div.change {
+    color: red;
+}
+
+/* Đăng nhập */
+.box-login {
+    width: 30%;
+    margin-left: 35%;
+    padding: 30px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+}
+
+.box-login.open {
+    display: none;
+}
+
+.box-login input {
+    width: 100%;
+    height: 30px;
+    margin: 10px 0 30px 0;
+    background-color: black;
+    border: none;
+    border-bottom: 2px solid white;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.box-login button {
+    background-image: linear-gradient(to right, rgb(0, 115, 255), rgb(0, 255, 255));
+    color: black;
+    font-weight: bold;
+    width: 100%;
+    height: 40px;
+    text-transform: uppercase;
+    font-size: 20px;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+.box-login button:hover {
+    opacity: 1;
+    cursor: pointer;
+    transform: scale(1.01);
+}
+
+.box-login .or {
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    color: black;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 900;
+    border-radius: 100%;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.box-login .google-facebook {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.box-login .google-facebook > div {
+    color: black;
+    margin-bottom: 20px;
+    width: 35%;
+    background-image: linear-gradient(to right, rgb(0, 115, 255), rgb(0, 255, 255));
+    margin: 10px;
+    opacity: 0.8;
+}
+
+.box-login .google-facebook > div:hover {
+    opacity: 1;
+    transform: scale(1.01);
+    cursor: pointer;
+}
+
+.box-login div > i {
+    padding: 10px;
+    color: black;
+    border-right: 2px solid black;
+}
+
+.box-login .forgotpass {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px;
+    color: rgba(0, 0, 255, 0.616);
+}
+
+.box-login .forgotpass a {
+    text-decoration: none;
+}
+
+.box-login .forgotpass:hover{
+    transform: scale(1.01);
+}
+
+/* Đăng ký */
+.box-register {
+    display: none;
+    width: 30%;
+    margin-left: 35%;
+    padding: 30px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+}
+
+.box-register.open {
+    display: block;
+}
+
+.box-register input {
+    width: 100%;
+    height: 30px;
+    margin: 10px 0 30px 0;
+    background-color: black;
+    border: none;
+    border-bottom: 2px solid white;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.box-register button {
+    background-image: linear-gradient(to right, rgb(0, 115, 255), rgb(0, 255, 255));
+    color: black;
+    font-weight: bold;
+    width: 100%;
+    height: 40px;
+    text-transform: uppercase;
+    font-size: 20px;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+/* Footer */
+.box-footer {
+    margin-top: 50px;
+}
+
+
+/* Mobile */
+@media screen and (max-width: 46.1875em) {
+    .box-login {
+        width: 90%;
+        margin-left: 5%;
+    }
+
+    .box-register {
+        width: 90%;
+        margin-left: 5%;
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 46.25em) and (max-width: 63.9375em) {
+    .box-login {
+        width: 60%;
+        margin-left: 20%;
+    }
+
+    .box-register {
+        width: 60%;
+        margin-left: 20%;
+    }
+}
