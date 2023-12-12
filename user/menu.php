@@ -45,9 +45,30 @@
                     </ul>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item dropdown">
-                          <?php if (isset($_COOKIE["userid"])) {?>
+                          <?php if (isset($_COOKIE["userid"])) {
+                            $userid = $_COOKIE["userid"];
+
+                            $sql="SELECT * FROM users WHERE userid=:userid";
+                            $stmt=$conn->prepare($sql);
+                            $stmt->bindParam(':userid', $userid);
+                            $stmt->execute();
+                            $result=$stmt->fetch(PDO::FETCH_ASSOC);  
+                          ?>
                           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i>
+                            <!-- <i class="fas fa-user"></i> -->
+                            <?php 
+                              if (empty($result["avt"])) {
+                                echo '<img class="avt" src="./assets/img/avtmacdinh.jpg" alt="">'; 
+                              } else {
+                                  $avt=$result["avt"];
+                                  $infoavt = getimagesizefromstring($avt);
+                                  if (!empty($infoavt['mime'])) {
+                                      $mime = $infoavt['mime'];
+                                  } else $mime="";
+                                  $avtsrc='data:' .$mime. ';base64,' .base64_encode($avt);
+                                  echo '<img class="avt" src="' .$avtsrc. '" alt="">';
+                              }
+                            ?>
                           </a>
                           <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/ĐACS2_NEW/user/handle/info.php">Thông tin</a></li>

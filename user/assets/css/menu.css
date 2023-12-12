@@ -112,3 +112,9 @@
 #menu .menu .dropdown-menu li:hover .dropdown-item {
     color: black;
 }
+
+#menu .menu .avt {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+}

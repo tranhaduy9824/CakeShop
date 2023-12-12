@@ -135,7 +135,19 @@
                 <div class="content-right">
                     <div class="info-user-send">
                         <div class="info-user">
-                            <img src="<?php echo $result1["avt"];?>" alt="">
+                            <?php 
+                                if (empty($result1["avt"])) {
+                                    echo '<img src="/ĐACS2/user/assets/img/avtmacdinh.jpg" alt="">'; 
+                                } else {
+                                    $avt=$result1["avt"];
+                                    $infoavt = getimagesizefromstring($avt);
+                                    if (!empty($infoavt['mime'])) {
+                                        $mime = $infoavt['mime'];
+                                    } else $mime="";
+                                    $avtsrc='data:' .$mime. ';base64,' .base64_encode($avt);
+                                    echo '<img src="' .$avtsrc. '" alt="">';
+                                }
+                            ?>
                             <h4><?php echo $result1["fullname"];?></h4>
                         </div>
                         <div class="more-btn">
@@ -144,7 +156,19 @@
                     </div>
                     <div class="box-chat">
                         <div class="info-user">
-                            <img src="<?php echo $result1["avt"];?>" alt="">
+                            <?php 
+                                if (empty($result1["avt"])) {
+                                    echo '<img src="/ĐACS2/user/assets/img/avtmacdinh.jpg" alt="">'; 
+                                } else {
+                                    $avt=$result1["avt"];
+                                    $infoavt = getimagesizefromstring($avt);
+                                    if (!empty($infoavt['mime'])) {
+                                        $mime = $infoavt['mime'];
+                                    } else $mime="";
+                                    $avtsrc='data:' .$mime. ';base64,' .base64_encode($avt);
+                                    echo '<img src="' .$avtsrc. '" alt="">';
+                                }
+                            ?>
                             <h4><?php echo $result1["fullname"];?></h4>
                         </div>
                         <div class="content-chat">
