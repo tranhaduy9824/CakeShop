@@ -44,31 +44,46 @@
         }
     ?>
 
-    <?php 
-        if (isset($_POST["delivery"])) {
-            $delivery=$_POST["delivery"];
-        } else {
-            $delivery="Chưa giao";
-        }
-        if (isset($_POST["status"])) {
-            $status=$_POST["status"];
-        } else {
-            $status="Chưa thanh toán";
-        }
-
-        $sql="SELECT * FROM bill WHERE userid=:userid and delivery=:delivery and status=:status";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':delivery', $delivery);
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-    ?>
     <!-- Main -->
     <div id="main">
         <!-- Menu -->
         <?php include '../menu.php';?>
 
+        <?php 
+            if (isset($_POST["delivery"])) {
+                $delivery = $_POST["delivery"];
+            } else {
+                $delivery = "";
+            }
+            if (isset($_POST["status"])) {
+                $status = $_POST["status"];
+            } else {
+                $status = "";
+            }
+
+            if (empty($delivery) && empty($status)) {
+                $sql = "SELECT * FROM bill WHERE userid=:userid";
+                $stmt = $conn->prepare($sql);
+            } else {
+                $sql = "SELECT * FROM bill WHERE userid=:userid";
+                if (!empty($delivery)) {
+                    $sql .= " AND delivery = :delivery";
+                }
+                if (!empty($status)) {
+                    $sql .= " AND status = :status";
+                }
+                $stmt = $conn->prepare($sql);
+                if (!empty($delivery)) {
+                    $stmt->bindParam(':delivery', $delivery);
+                }
+                if (!empty($status)) {
+                    $stmt->bindParam(':status', $status);
+                }
+            }
+            $stmt->bindParam(':userid', $userid);
+            $stmt->execute();
+            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        ?>
         <!-- Bill -->
         <div id="bill">
             <div class="box-bill">
@@ -77,16 +92,21 @@
                     <h3>Đơn hàng của bạn</h3>
                     <div class="choose">
                         <form action="bill.php" method="post">
+                            <label for="">Trạng thái</label>
+                            <select name="status" id="" onchange="this.form.submit()">
+                                <option value="Chưa thanh toán" <?php if ($status=="Chưa thanh toán" && $delivery!="Đã giao") echo 'selected'; if ($delivery=="Đã giao") echo 'disabled';?>>Chưa thanh toán</option>
+                                <option value="Đã thanh toán" <?php if ($status=="Đã thanh toán" && $delivery!="Đã giao") echo 'selected'; if ($delivery=="Đã giao") echo 'disabled';?>>Đã thanh toán</option>
+                                <option value="" <?php if ($status==""||$delivery=="Đã giao") echo 'selected';?>>Tất cả</option>
+                            </select>
+                            <label for="">Giao hàng</label>
                             <select name="delivery" id="" onchange="this.form.submit()">
                                 <option value="Chưa giao" <?php if ($delivery=="Chưa giao") echo 'selected';?>>Chưa giao</option>
                                 <option value="Đã giao" <?php if ($delivery=="Đã giao") echo 'selected';?>>Đã giao</option>
-                            </select>
-                            <select name="status" id="" onchange="this.form.submit()">
-                                <option value="Chưa thanh toán" <?php if ($status=="Chưa thanh toán") echo 'selected';?>>Chưa thanh toán</option>
-                                <option value="Đã thanh toán" <?php if ($status=="Đã thanh toán") echo 'selected';?>>Đã thanh toán</option>
+                                <option value="" <?php if ($delivery=="") echo 'selected';?>>Tất cả</option>
                             </select>
                         </form>
                     </div>
+                    
                     <?php if (count($result)>0) {?>
                         <table class="show-bill">
                             <tr>
@@ -100,48 +120,51 @@
                                 <th>Sản phẩm</th>
                                 <th>Trạng thái</th>
                                 <th>Ghi chú</th>
+                                <th>Giao hàng</th>
                                 <th>Thời gian</th>
                             </tr>
                             <?php 
                                 foreach ($result as $row) {
-                                    if ($row["typepay"]=="Thanh toán trực tiếp" || $row["status"]=="Đã thanh toán") {
-                                        echo '<tr>';
-                                        echo '<td>' .$row["idbill"]. '</td>';
-                                        echo '<td>' .$row["fullname"]. '</td>';
-                                        echo '<td>' .$row["phone"]. '</td>';
-                                        echo '<td>' .$row["email"]. '</td>';
-                                        echo '<td>' .$row["address"]. '</td>';
-                                        echo '<td>' .$row["typepay"]. '</td>';
-                                        echo '<td>' .$row["totalbill"]. '</td>';
-                                        echo '<td>';
-                                        echo '<table class="sub-table">';
-                                        $str = $row["sanphams"];
-                                        $numbers = explode(", ", $str);
-                                        $count = count($numbers);
-                                        foreach ($numbers as $index => $number) {
-                                            if ($index == $count - 1) {
-                                                continue;
-                                            }
-                                            $parts = explode("-", $number);
-                                            $idsp = $parts[0];
-                                            $countsp = $parts[1];
-                                            $sql1="SELECT  * FROM sanphams WHERE idsp=:idsp";
-                                            $stmt1=$conn->prepare($sql1);
-                                            $stmt1->bindParam(':idsp', $idsp);
-                                            $stmt1->execute();
-                                            $result1=$stmt1->fetch(PDO::FETCH_ASSOC);
-                                            echo '<tr>';
-                                            echo '<td>' .$result1["namesp"]. '</td>';
-                                            echo '<td>' .$countsp. '</td>';
-                                            echo '</tr>';
+                                    echo '<tr>';
+                                    echo '<td>' .$row["idbill"]. '</td>';
+                                    echo '<td>' .$row["fullname"]. '</td>';
+                                    echo '<td>' .$row["phone"]. '</td>';
+                                    echo '<td>' .$row["email"]. '</td>';
+                                    echo '<td>' .$row["address"]. '</td>';
+                                    echo '<td>' .$row["typepay"]. '</td>';
+                                    echo '<td>' .$row["totalbill"]. '</td>';
+                                    echo '<td>';
+                                    echo '<table class="sub-table">';
+                                    $str = $row["sanphams"];
+                                    $numbers = explode(", ", $str);
+                                    $count = count($numbers);
+                                    foreach ($numbers as $index => $number) {
+                                        if ($index == $count - 1) {
+                                            continue;
                                         }
-                                        echo '</table>';
-                                        echo '</td>';
-                                        echo '<td>' .$row["status"]. '</td>';
-                                        echo '<td>' .$row["note"]. '</td>';
-                                        echo '<td>' .$row["time"]. '</td>';
+                                        $parts = explode("-", $number);
+                                        $idsp = $parts[0];
+                                        $countsp = $parts[1];
+                                        $sql1="SELECT  * FROM sanphams WHERE idsp=:idsp";
+                                        $stmt1=$conn->prepare($sql1);
+                                        $stmt1->bindParam(':idsp', $idsp);
+                                        $stmt1->execute();
+                                        $result1=$stmt1->fetch(PDO::FETCH_ASSOC);
+                                        echo '<tr>';
+                                        echo '<td>' .$result1["namesp"]. '</td>';
+                                        echo '<td>' .$countsp. '</td>';
                                         echo '</tr>';
                                     }
+                                    echo '</table>';
+                                    echo '</td>';
+                                    echo '<td>' .$row["status"]. '</td>';
+                                    echo '<td>' .$row["note"]. '</td>';
+                                    echo '<td>' .$row["delivery"]. '</td>';
+                                    echo '<td>' .$row["time"]. '</td>';
+                                    if ($row["typepay"]==="Thanh toán trực tuyến" && $row["status"]==="Chưa thanh toán") {
+                                        echo '<td class="paybill"><a href="pay.php?idbill=' .$row["idbill"]. '">Thanh toán</a></td>';
+                                    }
+                                    echo '</tr>';   
                                 }
                             ?>
                         </table>

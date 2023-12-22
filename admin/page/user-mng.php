@@ -22,75 +22,87 @@
             echo "Lỗi: " .$e->getMessage();
         }
 
-        if (isset($_GET["delete"]) && $_GET["confirm"] == true) {
-            $userid = $_GET["delete"];
+        if (isset($_COOKIE["role"])) {
+            $role = $_COOKIE["role"];
+        }
 
-            $sql="SELECT * FROM bill WHERE userid=:userid";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindParam('userid', $userid);
-            $stmt->execute();
-            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-            if (count($result)==0) {
-                $sql1 = "DELETE FROM carts WHERE userid=:userid";
-                $sql2 = "DELETE FROM comments WHERE userid=:userid";
-                $sql3 = "DELETE FROM users WHERE userid=:userid";
-            
-                $stmt1 = $conn->prepare($sql1);
-                $stmt2 = $conn->prepare($sql2);
-                $stmt3 = $conn->prepare($sql3);
-                $stmt1->bindParam(':userid', $userid);
-                $stmt2->bindParam(':userid', $userid);
-                $stmt3->bindParam(':userid', $userid);
-                $stmt1->execute();
-                $stmt2->execute();
-                $stmt3->execute();
-            } else {
-                echo '<script>alert("Người dùng đang có đơn hàng, không thể xóa!"); window.location.href="user-mng.php";</script>';
+        if (isset($_COOKIE["role"]) && $_COOKIE["role"]=="admin") {
+            if (isset($_GET["delete"]) && $_GET["confirm"] == true) {
+                $userid = $_GET["delete"];
+    
+                $sql="SELECT * FROM bill WHERE userid=:userid";
+                $stmt=$conn->prepare($sql);
+                $stmt->bindParam('userid', $userid);
+                $stmt->execute();
+                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                if (count($result)==0) {
+                    $sql1 = "DELETE FROM carts WHERE userid=:userid";
+                    $sql2 = "DELETE FROM comments WHERE userid=:userid";
+                    $sql3 = "DELETE FROM users WHERE userid=:userid";
+                
+                    $stmt1 = $conn->prepare($sql1);
+                    $stmt2 = $conn->prepare($sql2);
+                    $stmt3 = $conn->prepare($sql3);
+                    $stmt1->bindParam(':userid', $userid);
+                    $stmt2->bindParam(':userid', $userid);
+                    $stmt3->bindParam(':userid', $userid);
+                    $stmt1->execute();
+                    $stmt2->execute();
+                    $stmt3->execute();
+                } else {
+                    echo '<script>alert("Người dùng đang có đơn hàng, không thể xóa!"); window.location.href="user-mng.php";</script>';
+                }
             }
-        }
+    
+            if (isset($_GET["block"])) {
+                $userid=$_GET["block"];
+                $status=1;
+    
+                $sql="UPDATE users SET status=:status WHERE userid=:userid";
+                $stmt=$conn->prepare($sql);
+                $stmt->bindParam(':status', $status);
+                $stmt->bindParam('userid', $userid);
+                $stmt->execute();
 
-        if (isset($_GET["block"])) {
-            $userid=$_GET["block"];
-            $status=1;
+                header("Location: user-mng.php");
+                exit();
+            }
+            
+            if (isset($_GET["openblock"])) {
+                $userid=$_GET["openblock"];
+                $status=0;
+    
+                $sql="UPDATE users SET status=:status WHERE userid=:userid";
+                $stmt=$conn->prepare($sql);
+                $stmt->bindParam(':status', $status);
+                $stmt->bindParam('userid', $userid);
+                $stmt->execute();
 
-            $sql="UPDATE users SET status=:status WHERE userid=:userid";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindParam(':status', $status);
-            $stmt->bindParam('userid', $userid);
-            $stmt->execute();
-        }
-        
-        if (isset($_GET["openblock"])) {
-            $userid=$_GET["openblock"];
-            $status=0;
-
-            $sql="UPDATE users SET status=:status WHERE userid=:userid";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindParam(':status', $status);
-            $stmt->bindParam('userid', $userid);
-            $stmt->execute();
-        }
-
-        if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["edituser"])) {
-            $userid=$_POST["userid"];
-            $username=$_POST["username"];
-            $fullname=$_POST["fullname"];
-            $password=$_POST["password"];
-            $email=$_POST["email"];
-            $phone=$_POST["phone"];
-
-            $sql="UPDATE users SET username=:username, fullname=:fullname, email=:email, password=:password, phone=:phone WHERE userid=:userid";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindParam(':userid', $userid);
-            $stmt->bindParam(':username', $username);
-            $stmt->bindParam(':fullname', $fullname);
-            $stmt->bindParam(':password', $password);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':phone', $phone);
-            $stmt->execute();
-
-            header("Location: user-mng.php");
-            exit();
+                header("Location: user-mng.php");
+                exit();
+            }
+    
+            if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["edituser"])) {
+                $userid=$_POST["userid"];
+                $username=$_POST["username"];
+                $fullname=$_POST["fullname"];
+                $password=$_POST["password"];
+                $email=$_POST["email"];
+                $phone=$_POST["phone"];
+    
+                $sql="UPDATE users SET username=:username, fullname=:fullname, email=:email, password=:password, phone=:phone WHERE userid=:userid";
+                $stmt=$conn->prepare($sql);
+                $stmt->bindParam(':userid', $userid);
+                $stmt->bindParam(':username', $username);
+                $stmt->bindParam(':fullname', $fullname);
+                $stmt->bindParam(':password', $password);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':phone', $phone);
+                $stmt->execute();
+    
+                header("Location: user-mng.php");
+                exit();
+            }
         }
     ?>
 
@@ -252,6 +264,7 @@
         if ($result) {
     ?>
 
+    <?php if ($role === "admin") {?>
     <!-- Model edit product -->
     <div id="model-edit">
         <form action="user-mng.php" method="post">
@@ -291,7 +304,10 @@
             </div>
         </form>
     </div>
-    <?php } ?>
+    <?php 
+            }
+        } 
+    ?>
 
     <?php } else {
             header("Location: /ĐACS2_NEW/admin/index.php");

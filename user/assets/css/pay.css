@@ -1,0 +1,33 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #6c6f70;
+    color: white;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Main */
+#main {
+    margin: 80px 0 20px;
+}
+
+#main .box-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#main .box-qr img {
+    width: 300px;
+    margin-bottom: 20px;
+    border-radius: 50px;
+}
+
+#main .box-qr span {
+    color: aqua;
+}

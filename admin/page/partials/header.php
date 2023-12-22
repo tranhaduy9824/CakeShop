@@ -29,12 +29,19 @@
 <div id="menu">
     <div class="adminname">
         <?php 
-            $image=$result["avt"];
-            $imageinfo=getimagesizefromstring($image);
-            $mime=$imageinfo['mime'];
-            $imagesrc="data:" .$mime. ";base64," .base64_encode($image);
+            if (empty($result["avt"])) {
+                echo '<img src="/ĐACS2_NEW/admin/img/avtmacdinh.jpg" alt="">';
+            }
+            else {
+                $avt = $result["avt"];
+                $infoavt = getimagesizefromstring($avt);
+                if (!empty($infoavt['mime'])) {
+                    $mime = $infoavt['mime'];
+                } else $mime="";
+                $avtsrc='data:' .$mime. ';base64,' .base64_encode($avt);
+                echo '<img src="' .$avtsrc. '" alt="">';
+            }
         ?>
-        <img src="<?php echo $imagesrc;?>" alt="">
         <p><b><?php echo $result["fullname"];?></b></p>
         <p>Chúc mừng bạn trở lại</p>
     </div>
@@ -47,10 +54,7 @@
             <li><a href="/ĐACS2_NEW/admin/page/product-mng.php"><i class="fas fa-tag"></i>Quản lý sản phẩm</a></li>
             <li><a href="/ĐACS2_NEW/admin/page/bill-mng.php"><i class="fas fa-tasks"></i>Quản lý đơn hàng</a></li>
             <li><a href="/ĐACS2_NEW/admin/page/contact.php"><i class="fas fa-running"></i>Hỗ trợ</a></li>
-            <li><a href=""><i class="fas fa-dollar-sign"></i>Bảng kê lương</a></li>
-            <li><a href=""><i class="fas fa-chart-pie"></i>Bảo cáo doanh thu</a></li>
-            <li><a href=""><i class="fas fa-calendar-alt"></i>Lịch công tác</a></li>
-            <li><a href=""><i class="fas fa-cog"></i>Cài đặt hệ thống</a></li>
+            <li><a href="/ĐACS2_NEW/admin/page/setting.php"><i class="fas fa-cog"></i>Cài đặt</a></li>
         </ul>
     </div>
 </div>

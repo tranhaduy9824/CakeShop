@@ -2,7 +2,7 @@
         <div class="menu">
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
-                  <a class="navbar-brand" href="#">Cake Shop</a>
+                  <a class="navbar-brand" href="/ĐACS2_NEW/user/index.php">Cake Shop</a>
                   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                   </button>
@@ -58,7 +58,7 @@
                             <!-- <i class="fas fa-user"></i> -->
                             <?php 
                               if (empty($result["avt"])) {
-                                echo '<img class="avt" src="./assets/img/avtmacdinh.jpg" alt="">'; 
+                                echo '<img class="avt" src="/ĐACS2/user/assets/img/avtmacdinh.jpg" alt="">'; 
                               } else {
                                   $avt=$result["avt"];
                                   $infoavt = getimagesizefromstring($avt);

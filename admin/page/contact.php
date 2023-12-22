@@ -93,6 +93,13 @@
                                 $stmt->bindParam(':userid', $userid);
                                 $stmt->execute();
                                 $result=$stmt->fetch(PDO::FETCH_ASSOC);
+
+                                $sql2 = "SELECT * FROM messages WHERE senderid=:senderid or receiverid=:receiverid ORDER BY timestamp DESC LIMIT 1";
+                                $stmt2 = $conn->prepare($sql2);
+                                $stmt2->bindParam(':senderid', $userid);
+                                $stmt2->bindParam(':receiverid', $userid);
+                                $stmt2->execute();
+                                $lastMessage = $stmt2->fetch(PDO::FETCH_ASSOC);
                                 echo '<div class="item-user">
                                         <input hidden type="text" value="' .$result["userid"]. '" name="userid">';
                                         if (empty($result["avt"])) {
@@ -107,14 +114,21 @@
                                             echo '<img src="' .$avtsrc. '" alt="">';
                                         }
                                         echo '<div class="info-user">
-                                            <p><b>' .$result["fullname"]. '</b></p>
-                                            <p>Bán cho tôi cái đồ án web php akjdjand nani hduahduih jn iduiahduiubuiudhujkanbuihik na  ăuiu    </p>
-                                        </div>
+                                            <p><b>' .$result["fullname"]. '</b></p>';
+                                            if ($lastMessage) {
+                                                if ($lastMessage["roleSender"] == "user") {
+                                                    echo '<p class="new-mess">' . $lastMessage["content"] . '</p>';
+                                                } else {
+                                                    echo '<p class="new-mess">Bạn: ' . $lastMessage["content"] . '</p>';
+                                                }
+                                            } 
+                                        echo '</div>
                                     </div>';
                             }
                         ?>
                     </div>
                 </div>
+                
                 <?php 
                     if (isset($_GET["userid"])) {
                         $userid=$_GET["userid"];
@@ -174,7 +188,7 @@
                         <div class="content-chat">
                             <?php 
                                 foreach ($result as $row) {
-                                    if ($row["senderid"]==$adminid) {
+                                    if ($row["roleSender"]!=="user") {
                                         echo '<div class="send">'.$row["content"]. '</div>';
                                     } else {
                                         echo '<div class="receive">'.$row["content"]. '</div>';

@@ -113,6 +113,15 @@ body {
     padding: 0;
 }
 
+#bill .box-bill .show-bill td.paybill {
+    background-color: black;
+}
+
+#bill .box-bill .show-bill td.paybill a {
+    color: white;
+    text-decoration: none;
+}
+
 #bill .box-bill .show-bill .sub-table{
     border-collapse: collapse;
     width: 100%;

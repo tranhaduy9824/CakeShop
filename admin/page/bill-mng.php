@@ -22,18 +22,46 @@
             echo "Lỗi: " .$e->getMessage();
         }
 
-        if (isset($_GET['delete'])) {
-            $idbill = $_GET['delete'];
-
-            if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
-                $sql="DELETE FROM bill WHERE idbill=:idbill";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':idbill', $idbill);
-                $stmt->execute();
-
-                header("Location: bill-mng.php");
-                exit();
+        if (isset($_COOKIE["role"]) && $_COOKIE["role"]==="admin") {
+            if (isset($_GET['delete'])) {
+                $idbill = $_GET['delete'];
+    
+                if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
+                    $sql="DELETE FROM bill WHERE idbill=:idbill";
+                    $stmt=$conn->prepare($sql);
+                    $stmt->bindParam(':idbill', $idbill);
+                    $stmt->execute();
+    
+                    header("Location: bill-mng.php");
+                    exit();
+                }
             }
+        }
+
+        if (isset($_GET["delivery"])) {
+            $idbill = $_GET["delivery"];
+
+            $sql = "UPDATE bill SET delivery=:delivery WHERE idbill=:idbill";
+            $stmt=$conn->prepare($sql);
+            $stmt->bindValue(':delivery', "Đã giao");
+            $stmt->bindParam(':idbill', $idbill);
+            $stmt->execute();
+    
+            header("Location: bill-mng.php");
+            exit();
+        }
+
+        if (isset($_GET["status"])) {
+            $idbill = $_GET["status"];
+
+            $sql = "UPDATE bill SET status=:status WHERE idbill=:idbill";
+            $stmt=$conn->prepare($sql);
+            $stmt->bindValue(':status', "Đã thanh toán");
+            $stmt->bindParam(':idbill', $idbill);
+            $stmt->execute();
+    
+            header("Location: bill-mng.php");
+            exit();
         }
     ?>
 
@@ -205,10 +233,16 @@
                                 <td>' .$row["delivery"]. '</td>
                                 <td>' .$row["time"]. '</td>';
                                 echo '<td><div>';
+                                if ($row["status"]=="Chưa thanh toán") {
+                                    echo '<a class="status" href="bill-mng.php?status=' .$row["idbill"]. '">Đã thanh toán</a>';
+                                }
+                                if ($row["delivery"]=="Chưa giao") {
+                                    echo '<a class="delivery" href="bill-mng.php?delivery=' .$row["idbill"]. '">Đã giao</a>';
+                                }
+                                echo '<a class="more-info" href="bill-mng.php?idbill=' .$row["idbill"]. '"><i class="fas fa-eye"></i></a>';
                                 if ($row["delivery"]=="Chưa giao") {
                                     echo '<a class="delete" href="bill-mng.php?delete=' .$row["idbill"]. '&confirm=true" onclick="return confirmDelete()"><i class="fas fa-trash"></i></a>';
                                 }
-                                echo '<a class="more-info" href="bill-mng.php?idbill=' .$row["idbill"]. '"><i class="fas fa-eye"></i></a>';
                                 echo '</div></td>
                                 </tr>';
                             }

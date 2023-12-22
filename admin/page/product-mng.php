@@ -22,47 +22,53 @@
             echo "Lỗi: " .$e->getMessage(); 
         }
 
-        if (isset($_GET['delete'])) {
-            $idsp = $_GET['delete'];
+        if (isset($_COOKIE["role"])) {
+            $role = $_COOKIE["role"];
+        }
 
-            if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
-                $sql="DELETE FROM sanphams WHERE idsp=:idsp";
-                $stmt=$conn->prepare($sql);
+        if (isset($_COOKIE["role"]) && $_COOKIE["role"]=="admin") {
+            if (isset($_GET['delete'])) {
+                $idsp = $_GET['delete'];
+    
+                if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
+                    $sql="DELETE FROM sanphams WHERE idsp=:idsp";
+                    $stmt=$conn->prepare($sql);
+                    $stmt->bindParam(':idsp', $idsp);
+                    $stmt->execute();
+    
+                    header("Location: product-mng.php");
+                    exit();
+                }
+            }
+    
+            if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["editsp"])) {
+                $idsp=$_POST["idsp"];
+                $namesp=$_POST["namesp"];
+                $price=$_POST["price"];
+                $ribbon=$_POST["ribbon"];
+                $type=$_POST["type"];
+                $dessp=$_POST["dessp"];
+    
+                if (!empty($_FILES['imagesp']['tmp_name'])) {
+                    $imagesp=file_get_contents($_FILES['imagesp']['tmp_name']);
+                    $sql="UPDATE sanphams SET imagesp=:imagesp, namesp=:namesp, dessp=:dessp, price=:price, ribbon=:ribbon, type=:type WHERE idsp=:idsp";
+                    $stmt=$conn->prepare($sql);
+                    $stmt->bindParam(':imagesp', $imagesp);
+                } else {
+                    $sql="UPDATE sanphams SET namesp=:namesp, dessp=:dessp, price=:price, ribbon=:ribbon, type=:type WHERE idsp=:idsp";
+                    $stmt=$conn->prepare($sql);
+                }
                 $stmt->bindParam(':idsp', $idsp);
+                $stmt->bindParam(':namesp', $namesp);
+                $stmt->bindParam(':dessp', $dessp);
+                $stmt->bindParam(':price', $price);
+                $stmt->bindParam(':ribbon', $ribbon);
+                $stmt->bindParam(':type', $type);
                 $stmt->execute();
-
+    
                 header("Location: product-mng.php");
                 exit();
             }
-        }
-
-        if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["editsp"])) {
-            $idsp=$_POST["idsp"];
-            $namesp=$_POST["namesp"];
-            $price=$_POST["price"];
-            $ribbon=$_POST["ribbon"];
-            $type=$_POST["type"];
-            $dessp=$_POST["dessp"];
-
-            if (!empty($_FILES['imagesp']['tmp_name'])) {
-                $imagesp=file_get_contents($_FILES['imagesp']['tmp_name']);
-                $sql="UPDATE sanphams SET imagesp=:imagesp, namesp=:namesp, dessp=:dessp, price=:price, ribbon=:ribbon, type=:type WHERE idsp=:idsp";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':imagesp', $imagesp);
-            } else {
-                $sql="UPDATE sanphams SET namesp=:namesp, dessp=:dessp, price=:price, ribbon=:ribbon, type=:type WHERE idsp=:idsp";
-                $stmt=$conn->prepare($sql);
-            }
-            $stmt->bindParam(':idsp', $idsp);
-            $stmt->bindParam(':namesp', $namesp);
-            $stmt->bindParam(':dessp', $dessp);
-            $stmt->bindParam(':price', $price);
-            $stmt->bindParam(':ribbon', $ribbon);
-            $stmt->bindParam(':type', $type);
-            $stmt->execute();
-
-            header("Location: product-mng.php");
-            exit();
         }
     ?>
 
@@ -108,7 +114,7 @@
                 <div class="btn-element">
                     <div class="btn btn-add">
                         <i class="fas fa-plus"></i>
-                        <a href="/ĐACS2_NEW/admin/page/add-product.php">Tạo mới sản phẩm</a>
+                        <a href="<?php if ($role === "admin") echo "/ĐACS2_NEW/admin/page/add-product.php";?>">Tạo mới sản phẩm</a>
                     </div>
                     <div class="btn btn-delete-all">
                         <i class="fas fa-trash"></i>
@@ -213,6 +219,7 @@
         $result=$stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
     ?>
+    <?php if ($role === "admin") {?>
     <!-- Model edit product -->
     <div id="model-edit">
         <form action="product-mng.php" method="post" enctype="multipart/form-data">
@@ -277,7 +284,7 @@
             </div>
         </form>
     </div>
-    <?php } ?>
+    <?php }} ?>
 
     <?php } else {
             header("Location: /ĐACS2_NEW/admin/index.php");

@@ -51,7 +51,7 @@
         }
     ?>
 
-    <?php if (isset($_COOKIE["adminid"])) {?>
+    <?php if (isset($_COOKIE["adminid"]) && $_COOKIE["role"] === "admin") {?>
     <!-- Main -->
     <div id="main">
         <!-- Header -->

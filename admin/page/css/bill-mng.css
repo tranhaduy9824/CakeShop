@@ -156,7 +156,7 @@ body {
 }
 
 #content .row2 .show-info td:nth-child(5) {
-    width: 200px;
+    width: 150px;
     word-break: break-all;
 }
 
@@ -167,21 +167,31 @@ body {
     height: auto;
 }
 
-#content .row2 .show-info td:last-child div .delete {
+#content .row2 .show-info td:last-child div > a {
     padding: 10px;
-    background-color: #f7c3c2;
-    color: #de0400;
-    border-radius: 0.357rem;
-    margin: 5px;
-}
-
-#content .row2 .show-info td:last-child div .more-info {
-    padding: 10px;
-    color: rgb(245 157 57);
-    background-color: rgb(251 226 197);
     border-radius: 0.357rem;
     text-decoration: none;
     margin: 5px;
+}
+
+#content .row2 .show-info td:last-child div .delete {
+    background-color: #f7c3c2;
+    color: #de0400;
+}
+
+#content .row2 .show-info td:last-child div .more-info {
+    color: rgb(245 157 57);
+    background-color: rgb(251 226 197);
+}
+
+#content .row2 .show-info td:last-child div .status {
+    background-color: #a6bfd5;
+    color: #105ad2;
+}
+
+#content .row2 .show-info td:last-child div .delivery {
+    background-color: #92c187;
+    color: #ffffff;
 }
 
 #content .row2 .change-page {

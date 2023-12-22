@@ -34,6 +34,7 @@
                     setcookie('adminid', $result["adminid"], time() + 86400, '/');
                     setcookie('adminname', $result["adminname"], time() + 86400, '/');
                     setcookie('adminfullname', $result["fullname"], time() + 86400, '/');
+                    setcookie('role', $result["role"], time() + 86400, '/');
                     echo '<script>alert("Đăng nhập thành công");window.location.href="page/index.php";</script>';
                 } else {
                     echo '<script>alert("Tài khoản hoặc mật khẩu không đúng")</script>';

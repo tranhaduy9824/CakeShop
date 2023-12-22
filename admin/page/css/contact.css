@@ -103,7 +103,6 @@ body {
 }
 
 .content-left .list-user .item-user .info-user {
-    height: 50px;
     overflow: hidden;
     width: 250px;
 }

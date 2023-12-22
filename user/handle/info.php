@@ -105,12 +105,18 @@
                 $stmt->bindParam(':note', $note);
                 $stmt->bindParam(':delivery', $delivery);
                 $stmt->execute();
-                // if ($typepay==="Thanh toán trực tiếp") {
-                //     echo '<script>alert("Đặt hàng thành công");</script>';
-                // } else {
-                //     echo '<script>alert("Hóa đơn đã hoàn tất, hãy thanh toán hóa đơn");</script>';
-                // }
-                echo '<script>window.location.href="/ĐACS2_NEW/user/handle/info.php?typepay=' .$typepay. '"</script>';
+
+                if ($typepay==="Thanh toán trực tiếp") {
+                    echo '<script>window.location.href="/ĐACS2_NEW/user/handle/info.php?typepay=' .$typepay. '"</script>';
+                } else {
+                    $sql = "SELECT * FROM bill WHERE userid = :userid ORDER BY time DESC LIMIT 1";
+                    $stmt=$conn->prepare($sql);
+                    $stmt->bindParam(':userid', $userid);
+                    $stmt->execute();
+                    $result=$stmt->fetch(PDO::FETCH_ASSOC);
+                    header("Location: pay.php?idbill=" . $result["idbill"]. "&typepay=" .$typepay);
+                    exit();
+                }
             }
         } catch (PDOException $e) {
             echo "Lỗi: " . $e->getMessage();

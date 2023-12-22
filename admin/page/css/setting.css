@@ -1,0 +1,450 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Header */
+#menu .list-menu ul li:nth-child(7) {
+    background-color: #c6defd;
+}
+
+#menu .list-menu ul li:nth-child(7) a {
+    color: rgb(22 22 72);
+}
+
+/* Content */
+#content {
+    margin-left: 250px;
+    margin-top: 50px;
+    padding: 10px;
+}
+
+#content .row1 {
+    margin-bottom: 20px;
+}
+
+#content h1 {
+    text-align: center;
+}
+
+#content .box-avt-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content .box-avt {
+    width: 300px;
+    padding: 10px;
+    border-radius: 100%;
+    background-color: black;
+    margin: 30px;
+}
+
+#content .box-avt img {
+    width: 100%;
+    height: 280px;
+    border-radius: 100%;
+}
+
+#content .box-info {
+    margin: 30px;
+}
+
+#content .box-info table th,
+#content .box-info table td{
+    text-align: left;
+    padding: 8px;
+    font-size: 18px;
+}
+
+#content .box-info table tr:last-child td {
+    text-transform: capitalize;
+}
+
+#content .box-change {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content .box-change .btn-change {
+    padding: 10px;
+    margin: 0 10px;
+    text-align: center;
+}
+
+#content .box-change .change-avt label:hover,
+#content .box-change .btn-change:hover {
+    cursor: pointer;
+}
+
+#content .box-change .change-avt {
+    margin-right: 100px;
+}
+
+#content .box-change .change-avt p{
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#content .box-change .change-avt label {
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border-radius: 50px;
+    text-align: center;
+}
+
+#content .box-change .change-info {
+    background-color: bisque;
+    border-radius: 50px;
+}
+
+#content .box-change .change-pass {
+    background-color: rgb(129 206 255);
+    border-radius: 50px;
+}
+
+#content .row2 {
+    background: white;
+    border-radius: 0.375rem;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+    margin: 0 15px 30px 15px;
+}
+
+#content .row2 h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#content .row2 .btn-element {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+#content .row2 .btn-element .btn {
+    padding: 5px;
+    font-size: 13px;
+    line-height: 1.5;
+    padding-left: 10px;
+    border-radius: 0.357rem;
+    padding-right: 10px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    margin-right: 10px;
+}
+
+#content .row2 .btn.btn-add,
+#content .row2 .btn a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #003c00;
+}
+
+#content .row2 .btn-add {
+    background: #9df99d;
+}
+
+
+#content .row2 .btn-delete-all {
+    background: #d0d0d0;
+}
+
+#content .row2 .show-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#content .row2 .show-info img {
+    width: 100%;
+    height: 50px;
+    border-radius: 100%;
+}
+
+#content .row2 .show-info tr:first-child {
+    background-color: #eee;
+}
+
+#content .row2 .show-info th,
+#content .row2 .show-info td {
+    border: 2px solid #ddd;
+    padding: 10px;
+    text-transform: capitalize;
+}
+
+#content .row2 .show-info td:nth-child(5),
+#content .row2 .show-info td:nth-child(6),
+#content .row2 .show-info td:nth-child(7) {
+    text-transform: none;
+}
+
+#content .row2 .show-info td:nth-child(4) {
+    width: 70px; 
+}
+
+#content .row2 .show-info td:nth-child(1),
+#content .row2 .show-info td:nth-child(4),
+#content .row2 .show-info td:nth-child(6),
+#content .row2 .show-info td:nth-child(7),
+#content .row2 .show-info td:nth-child(8),
+#content .row2 .show-info td:nth-child(9) {
+    text-align: center;
+}
+
+#content .row2 .show-info td:last-child div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content .row2 .show-info td:last-child div a:nth-child(1) {
+    padding: 10px;
+    background-color: #f7c3c2;
+    color: #de0400;
+    border-radius: 0.357rem;
+    margin: 3px;
+}
+
+#content .row2 .show-info td:last-child div a:nth-child(2) {
+    padding: 10px;
+    color: rgb(245 157 57);
+    background-color: rgb(251 226 197);
+    border-radius: 0.357rem;
+    margin: 3px;
+}
+
+#content .row2 .change-page {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#content .row2 .change-page .btn-change {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content .row2 .change-page .btn-change > div {
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    margin: 0 5px;
+    border: 1px solid rgb(0, 28, 64);
+    background-color: rgb(0, 28, 64);
+}
+
+#content .row2 .change-page .btn-change > div a {
+    text-decoration: none;
+    color: white;
+}
+
+/* Model */
+#model-change-pass,
+#model-change-staff,
+#model-add-staff,
+#model-change-info {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+#model-change-pass .box-change,
+#model-change-staff .box-change,
+#model-add-staff .box-change,
+#model-change-info .box-change {
+    background-color: #fefefe;
+    border: 1px solid #888;
+    border-radius: 0.5rem;
+    padding: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); 
+    width: 400px;
+}
+
+#model-change-pass .box-change h5,
+#model-change-staff .box-change h5,
+#model-add-staff .box-change h5,
+#model-change-info .box-change h5 {
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-size: 20px;
+    color: black;
+}
+
+#model-change-staff .box-change .row-change,
+#model-add-staff .box-change .row-change,
+#model-change-info .box-change .row-change {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+#model-change-pass .box-change .row-change {
+    margin-top: 20px;
+}
+
+#model-change-pass .box-change .row-change > div,
+#model-change-staff .box-change .row-change > div,
+#model-add-staff .box-change .row-change > div,
+#model-change-info .box-change .row-change > div {
+    flex-basis: calc(50%);
+}
+
+#model-change-pass .box-change label,
+#model-change-staff .box-change label,
+#model-add-staff .box-change label,
+#model-change-info .box-change label {
+    font-weight: 600;
+}   
+
+#model-change-pass .box-change select,
+#model-change-pass .box-change input,
+#model-change-staff .box-change select,
+#model-change-staff .box-change input,
+#model-add-staff .box-change select,
+#model-add-staff .box-change input,
+#model-change-info .box-change select,
+#model-change-info .box-change input {
+    display: block;
+    width: 95%;
+    padding: 0.375rem 0.75rem;
+    font-size: 15px;
+    line-height: 1.5;
+    color: black;
+    background-color: #f1f1f1;
+    background-clip: padding-box;
+    height: 45px;
+    border: 1px solid #dadada;
+    border-radius: 0.357rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#model-change-pass .box-change textarea,
+#model-change-staff .box-change textarea,
+#model-add-staff .box-change textarea,
+#model-change-info .box-change textarea {
+    display: block;
+    width: 95%;
+    padding: 0.375rem 0.75rem;
+    font-size: 15px;
+    line-height: 1.5;
+    color: black;
+    background-color: #f1f1f1;
+    background-clip: padding-box;
+    border: 1px solid #dadada;
+    border-radius: 0.357rem;
+    margin-top: 10px;
+}
+
+#model-change-pass .box-change textarea:focus,
+#model-change-pass .box-change select:focus,
+#model-change-pass .box-change input:focus,
+#model-change-staff .box-change textarea:focus,
+#model-change-staff .box-change select:focus,
+#model-change-staff .box-change input:focus,
+#model-add-staff .box-change textarea:focus,
+#model-add-staff .box-change select:focus,
+#model-add-staff .box-change input:focus,
+#model-change-info .box-change textarea:focus,
+#model-change-info .box-change select:focus,
+#model-change-info .box-change input:focus {
+    color: #495057;
+    background-color: #FFF;
+    border-color: rgb(0, 28, 64);
+}
+
+#model-change-pass .box-change .add-imagesp,
+#model-change-staff .box-change .add-imagesp,
+#model-add-staff .box-change .add-imagesp,
+#model-change-info .box-change .add-imagesp {
+    margin-top: 20px;
+}
+
+#model-change-pass .box-change .add-imagesp img,
+#model-change-staff .box-change .add-imagesp img,
+#model-add-staff .box-change .add-imagesp img,
+#model-change-info .box-change .add-imagesp img {
+    width: 70px;
+    height: 70px;
+}
+
+#model-change-pass .box-change .add-imagesp input,
+#model-change-staff .box-change .add-imagesp input,
+#model-add-staff .box-change .add-imagesp input,
+#model-change-info .box-change .add-imagesp input {
+    width: auto;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+#model-change-pass .box-change .add-imagesp input::file-selector-button,
+#model-change-staff .box-change .add-imagesp input::file-selector-button,
+#model-add-staff .box-change .add-imagesp input::file-selector-button,
+#model-change-info .box-change .add-imagesp input::file-selector-button {
+    background: #14142B;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 6px 20px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+#model-change-pass .box-change .save-cancel button,
+#model-change-staff .box-change .save-cancel button,
+#model-add-staff .box-change .save-cancel button,
+#model-change-info .box-change .save-cancel button {
+    background-color: rgb(166 236 171);
+    color: rgb(1 123 10);
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 2px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.357rem;
+    margin-top: 30px;
+    margin-right: 10px; 
+}
+    
+#model-change-pass .box-change .save-cancel a,
+#model-change-staff .box-change .save-cancel a,
+#model-add-staff .box-change .save-cancel a,
+#model-change-info .box-change .save-cancel a {
+    background-color: rgb(255 197 197);
+    color: rgb(190, 40, 40);
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 2px solid transparent;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.357rem;
+    text-decoration: none;
+}
