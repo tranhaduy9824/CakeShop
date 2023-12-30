@@ -5,30 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/forgotpass.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/forgotpass.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
     <?php
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/users.php';
+        require_once '../classes/carts.php';
+        require_once '../classes/comments.php';
+        require_once '../classes/sanphams.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
 
         session_start();
-        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/ĐACS2_NEW/PHPMailer-master/src/PHPMailer.php';
-        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/ĐACS2_NEW/PHPMailer-master/src/SMTP.php';
-        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/ĐACS2_NEW/PHPMailer-master/src/Exception.php';
-        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/ĐACS2_NEW/PHPMailer-master/src/POP3.php';
+        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/CuoiKiWeb/PHPMailer-master/src/PHPMailer.php';
+        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/CuoiKiWeb/PHPMailer-master/src/SMTP.php';
+        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/CuoiKiWeb/PHPMailer-master/src/Exception.php';
+        require '/CÔNG NGHỆ VÀ LẬP TRÌNH WEB/CuoiKiWeb/PHPMailer-master/src/POP3.php';
 
         use PHPMailer\PHPMailer\PHPMailer;
         use PHPMailer\PHPMailer\Exception;
@@ -66,16 +63,13 @@
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["sendcode"])) {
             $email = $_POST["email"];
 
-            $sql="SELECT * FROM users WHERE email=:email";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            $users = new Users();
+            $listUser = $users->getUserByEmail($email);
             
-            if (count($result)>0) {
+            if (count($listUser)>0) {
                 $randomcode = randomCode(); 
                 $_SESSION['code'] = $randomcode;
-                $_SESSION['userid'] = $result[0]["userid"];
+                $_SESSION['userid'] = $listUser[0]["userid"];
                 sendCodeEmail($email, $randomcode);
                 echo '<script>alert("Mã đã được gửi đến email: ' .$email. '");</script>';
             } else {

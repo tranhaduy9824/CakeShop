@@ -5,20 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/info.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/cart.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/contact.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/info.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/cart.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
     <?php 
-        $server = "localhost";
-        $user = "root";
-        $pass = "";
-        $db = "dacs2";
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/users.php';
+        require_once '../classes/carts.php';
+        require_once '../classes/comments.php';
+        require_once '../classes/sanphams.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
 
         if (isset($_COOKIE["userid"])&&isset($_COOKIE["username"])&&isset($_COOKIE["fullname"])&&isset($_COOKIE["email"])&&isset($_COOKIE["phone"])) {
             $userid = $_COOKIE["userid"];
@@ -28,53 +31,41 @@
             $phone = $_COOKIE["phone"];
         }
 
-        try {
-            $conn = new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['avt'])) {
+            $avt=file_get_contents($_FILES['avt']['tmp_name']);
 
-            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['avt'])) {
-                $avt=file_get_contents($_FILES['avt']['tmp_name']);
+            $users = new Users();
+            $users->changeAvt($userid, $avt);
 
-                $sql = "UPDATE users SET avt=:avt WHERE userid=:userid";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':userid', $userid);
-                $stmt->bindParam(':avt', $avt);
-                $stmt->execute();
+            setcookie('avt', $avt, time() + 86400, '/');
 
-                setcookie('avt', $avt, time() + 86400, '/');
+            header("Location: info.php");
+            exit();
+        }
 
-                header("Location: info.php");
-                exit();
-            }
+        if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['update-info'])) {
+            $fullname1=$_POST["new-fullname"];
+            $email1=$_POST["new-email"];
+            $phone1=$_POST["new-phone"];
 
-            if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['update-info'])) {
-                $fullname1=$_POST["new-fullname"];
-                $email1=$_POST["new-email"];
-                $phone1=$_POST["new-phone"];
+            $users = new Users();
+            $users->changeInfo($userid, $email1, $phone1);
 
-                $sql="UPDATE users SET email=:email, phone=:phone WHERE userid=:userid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':userid', $userid);
-                $stmt->bindParam(':email', $email1);
-                $stmt->bindParam(':phone', $phone1);
-                $stmt->execute();
+            setcookie('email', $email1, time() + 86400, '/');
+            setcookie('phone', $phone1, time() + 86400, '/');
 
-                setcookie('email', $email1, time() + 86400, '/');
-                setcookie('phone', $phone1, time() + 86400, '/');
+            echo '<script>alert("Cập nhập thành công"); window.location.href = "info.php";</script>';
+        }
 
-                echo '<script>alert("Cập nhập thành công"); window.location.href = "info.php";</script>';
-            }
+        if (isset($_GET["delete-cart"])) {
+            $idcart=$_GET["delete-cart"];
 
-            if (isset($_GET["delete-cart"])) {
-                $idcart=$_GET["delete-cart"];
+            $carts = new Carts();
+            $carts->deleteCartById($idcart);
+        }
 
-                $sql="DELETE FROM carts WHERE idcart=:idcart";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':idcart', $idcart);
-                $stmt->execute();
-            }
-
-            if ($_SERVER["REQUEST_METHOD"]="POST" && isset($_POST["add-bill"])) {
+        if ($_SERVER["REQUEST_METHOD"]="POST" && isset($_POST["add-bill"])) {
+            if (isset($_COOKIE["status"]) && $_COOKIE["status"]==0) {
                 $address=$_POST["address"];
                 $typepay=$_POST["type-pay"];
                 $totalbill=$_POST["totalbill"];
@@ -82,55 +73,37 @@
                 $note=$_POST["note"];
                 $sanphams="";
                 $delivery="Chưa giao";
-                $sql1="SELECT * FROM carts WHERE userid=:userid";
-                $stmt1=$conn->prepare($sql1);
-                $stmt1->bindParam(':userid', $userid);
-                $stmt1->execute();
-                $result1=$stmt1->fetchAll(PDO::FETCH_ASSOC);
-                foreach ($result1 as $row) {
+                
+                $carts = new Carts();
+                $listCart = $carts->getCartByUserId($userid);
+                foreach ($listCart as $row) {
                     $sanphams.=$row["idsp"]."-".$row["number"].", ";
                 }
 
-                $sql="INSERT INTO bill (userid, fullname, phone, email, address, typepay, totalbill, sanphams, status, note, delivery) VALUES (:userid, :fullname, :phone, :email, :address, :typepay, :totalbill, :sanphams, :status, :note, :delivery)";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':userid', $userid);
-                $stmt->bindParam(':fullname', $fullname);
-                $stmt->bindParam(':phone', $phone);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':address', $address);
-                $stmt->bindParam(':typepay', $typepay);
-                $stmt->bindParam(':totalbill', $totalbill);
-                $stmt->bindParam(':sanphams', $sanphams);
-                $stmt->bindParam(':status', $status);
-                $stmt->bindParam(':note', $note);
-                $stmt->bindParam(':delivery', $delivery);
-                $stmt->execute();
+                $bill = new Bill();
+                $bill->setBill($userid, $fullname, $phone, $email, $address, $typepay, $totalbill, $sanphams, $status, $note, $delivery);
 
                 if ($typepay==="Thanh toán trực tiếp") {
-                    echo '<script>window.location.href="/ĐACS2_NEW/user/handle/info.php?typepay=' .$typepay. '"</script>';
+                    echo '<script>window.location.href="/CuoiKiWeb/user/handle/info.php?typepay=' .$typepay. '"</script>';
                 } else {
-                    $sql = "SELECT * FROM bill WHERE userid = :userid ORDER BY time DESC LIMIT 1";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':userid', $userid);
-                    $stmt->execute();
-                    $result=$stmt->fetch(PDO::FETCH_ASSOC);
-                    header("Location: pay.php?idbill=" . $result["idbill"]. "&typepay=" .$typepay);
+                    $bill = new Bill();
+                    $listBill = $bill->getBillByUserId($userid);
+                    header("Location: pay.php?idbill=" . $listBill["idbill"]. "&typepay=" .$typepay);
                     exit();
                 }
+            } else {
+                echo '<script>alert("Tài khoản của bạn đã bị chặn, không thể đặt hàng")</script>';
             }
-        } catch (PDOException $e) {
-            echo "Lỗi: " . $e->getMessage();
         }
 
-        $sql="SELECT * FROM carts WHERE userid=:userid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
         $opendetailcart=0;
-        
-        if (count($result)>0) {
-            $opendetailcart=count($result);
+        if (isset($userid)) {
+            $carts = new Carts();
+            $listCart = $carts->getCartByUserId($userid);
+            
+            if (count($listCart)>0) {
+                $opendetailcart=count($listCart);
+            }
         }
     ?>
 
@@ -144,16 +117,13 @@
             <div class="box-left">
                 <div class="box-avt">
                     <?php 
-                        $sql = "SELECT * FROM users WHERE userid=:userid";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bindParam(':userid', $userid);
-                        $stmt->execute();
-                        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                        if (empty($result["avt"])) {
-                            echo '<img src="/ĐACS2_NEW/user/assets/img/avtmacdinh.jpg" alt="">';
+                        $users = new Users();
+                        $listUser = $users->getUserByUserId($userid);
+                        if (empty($listUser["avt"])) {
+                            echo '<img src="/CuoiKiWeb/user/assets/img/avtmacdinh.jpg" alt="">';
                         }
                         else {
-                            $avt = $result["avt"];
+                            $avt = $listUser["avt"];
                             $infoavt = getimagesizefromstring($avt);
                             if (!empty($infoavt['mime'])) {
                                 $mime = $infoavt['mime'];
@@ -214,22 +184,16 @@
                 if ($_COOKIE["userid"]) {
                     $userid=$_COOKIE["userid"];
 
-                    $sql="SELECT * FROM carts WHERE userid=:userid";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':userid', $userid);
-                    $stmt->execute();
-                    $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $carts = new Carts();
+                    $listCart = $carts->getCartByUserId($userid);
                     $totalcart=0;
 
-                    if (count($result)>0) {
+                    if (count($listCart)>0) {
                         echo '<table>';
                         echo '<tr class="title"><th colspan="2">Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Tổng cộng</th><th>Xóa</th>';
-                        foreach ($result as $row) {
-                            $sql2="SELECT * FROM sanphams WHERE idsp=:idsp";
-                            $stmt2=$conn->prepare($sql2);
-                            $stmt2->bindParam(':idsp', $row["idsp"]);
-                            $stmt2->execute();
-                            $result2=$stmt2->fetch(PDO::FETCH_ASSOC);
+                        foreach ($listCart as $row) {
+                            $sanphams = new Sanphams();
+                            $listSanpham = $sanphams->getSanphamsById($row["idsp"]);
 
                             echo '<tr>';
                             $image=$row["imagesp"];
@@ -238,7 +202,7 @@
                             $imagesrc='data:' .$mime. ';base64,' .base64_encode($image);
                             echo '<td><img src="' .$imagesrc. '"></td>';
                             echo '<td>' .$row["namesp"]. '</td>'; 
-                            echo '<td>' .$result2["price"]. '</td>'; 
+                            echo '<td>' .$listSanpham["price"]. '</td>'; 
                             echo '<td>' .$row["number"]. '</td>'; 
                             echo '<td>' .$row["total"]. '</td>'; 
                             echo '<td><a href="info.php?delete-cart=' .$row["idcart"]. '"><i class="fas fa-times"></i></td>'; 
@@ -307,17 +271,14 @@
                 <div class="box-info-cart">
                     <h2>Thông tin đơn hàng</h2>
                     <?php 
-                        $sql="SELECT * FROM carts WHERE userid=:userid";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':userid', $userid);
-                        $stmt->execute();
-                        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $carts = new Carts();
+                        $listCart = $carts->getCartByUserId($userid);
                         $totalcart=0;
 
-                        if (count($result)>0) {
+                        if (count($listCart)>0) {
                             echo '<table>';
                             echo '<tr><th colspan="2">Sản phẩm</th><th>SL</th><th>Tổng cộng</th></tr>';
-                            foreach ($result as $row) {
+                            foreach ($listCart as $row) {
                                 echo '<tr>';
                                 $image=$row["imagesp"];
                                 $imageinfo=getimagesizefromstring($image);
@@ -385,10 +346,8 @@
                     Khi đơn hàng đã được xác nhận và xuất kho, một số yêu cầu hủy đơn hàng sẽ không thực hiện được.
                     Xin chân thành cảm ơn quý khách hàng !
                     </p>';
-                    $sql="DELETE FROM carts WHERE userid=:userid";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':userid', $userid);
-                    $stmt->execute();
+                    $carts = new Carts();
+                    $carts->deleteCartsByUserId($userid);
                 }
             ?>
         </div> 
@@ -410,7 +369,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/ĐACS2_NEW/user/contact.js"></script>
+    <script src="/CuoiKiWeb/user/contact.js"></script>
     <script>
         var btncart=document.querySelector('.cart');
         var boxcart=document.querySelector('.box-cart');
@@ -431,7 +390,7 @@
 
         for (const btndetail of btndetails) {
             btndetail.addEventListener('click', function() {
-                window.location.href="/ĐACS2_NEW/user/handle/info.php"
+                window.location.href="/CuoiKiWeb/user/handle/info.php"
             });
             btndetail.addEventListener('click', function() {
                 numberpay.classList.remove('change'); 

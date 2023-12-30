@@ -10,19 +10,17 @@
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
-    <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+    <?php
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
+        $users = new Users();
+        $sanphams = new Sanphams();
+        $bill = new Bill();
     ?>
 
     <?php if (isset($_COOKIE["adminid"]))  {?>
@@ -42,46 +40,37 @@
                     <div class="statistics">
                         <div>
                             <?php 
-                                $sql="SELECT * FROM users";
-                                $stmt=$conn->prepare($sql);
-                                $stmt->execute();
-                                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                $listUser = $users->getUsers();
                             ?>
                             <div class="part">
                                 <i class="fas fa-users"></i>
                                 <div class="info-part">
                                     <h4>Tổng khách hàng</h4>
-                                    <p><b><?php echo count($result); ?> khách hàng</b></p>
+                                    <p><b><?php echo count($listUser); ?> khách hàng</b></p>
                                     <p>Tổng số khách hàng được quản lý</p>
                                 </div>
                             </div>
                             <?php 
-                                $sql="SELECT * FROM sanphams";
-                                $stmt=$conn->prepare($sql);
-                                $stmt->execute();
-                                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                $listSanpham = $sanphams->getSanphams();
                             ?>
                             <div class="part">
                                 <i class="fas fa-database"></i>
                                 <div class="info-part">
                                     <h4>Tổng sản phẩm</h4>
-                                    <p><b><?php echo count($result); ?> sản phẩm</b></p>
+                                    <p><b><?php echo count($listSanpham); ?> sản phẩm</b></p>
                                     <p>Tổng số sản phẩm được quản lý</p>
                                 </div>
                             </div>
                         </div>
                         <div>
                             <?php 
-                                $sql="SELECT * FROM bill";
-                                $stmt=$conn->prepare($sql);
-                                $stmt->execute();
-                                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                $listBill = $bill->getBills();
                             ?>
                             <div class="part">
                                 <i class="fas fa-shopping-bag"></i>
                                 <div class="info-part">
                                     <h4>Tổng đơn hàng</h4>
-                                    <p><b><?php echo count($result);?> đơn hàng</b></p>
+                                    <p><b><?php echo count($listBill);?> đơn hàng</b></p>
                                     <p>Tổng số hóa đơn bán hàng trong tháng</p>
                                 </div>
                             </div>
@@ -99,10 +88,7 @@
                         <h3>Tình trạng đơn hàng</h3>
                         <div>
                             <?php 
-                                $sql="SELECT * FROM bill ORDER BY idbill DESC LIMIT 4";
-                                $stmt=$conn->prepare($sql);
-                                $stmt->execute();
-                                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                $listBill = $bill->get4BillNew();
                             ?>
                             <table class="order">
                                 <tr>
@@ -112,14 +98,11 @@
                                     <th>Trạng thái</th>
                                 </tr>
                                 <?php 
-                                    foreach ($result as $row) {
-                                        $stmt=$conn->prepare("SELECT * FROM users WHERE userid=:userid");
-                                        $stmt->bindParam(':userid', $row["userid"]);
-                                        $stmt->execute();
-                                        $result2=$stmt->fetch(PDO::FETCH_ASSOC);
+                                    foreach ($listBill as $row) {
+                                        $listUser = $users->getUserById($row["userid"]);
                                     echo '<tr>
                                     <td>' .$row["idbill"]. '</td>
-                                    <td>' .$result2["fullname"]. '</td>
+                                    <td>' .$listUser["fullname"]. '</td>
                                     <td>' .$row["totalbill"]. '</td>
                                     <td>' .$row["status"]. '</td>
                                     </tr>';
@@ -132,10 +115,7 @@
                         <h3>Khách hàng mới</h3>
                         <div>
                             <?php 
-                                $sql="SELECT * FROM users ORDER BY userid DESC LIMIT 4";
-                                $stmt=$conn->prepare($sql);
-                                $stmt->execute();
-                                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                                $listUser = $users->get4UserNew();
                             ?>
                             <table class="users">
                                 <tr>
@@ -145,7 +125,7 @@
                                     <th>Số điện thoại</th>
                                 </tr>
                                 <?php 
-                                    foreach ($result as $row) {
+                                    foreach ($listUser as $row) {
                                     echo '<tr>
                                     <td>#' .$row["userid"]. '</td>
                                     <td>' .$row["fullname"]. '</td>
@@ -170,7 +150,7 @@
         </div>
     </div>
     <?php } else {
-            header("Location: /ĐACS2_NEW/admin/index.php");
+            header("Location: /CuoiKiWeb/admin/index.php");
             exit();
         }
     ?>

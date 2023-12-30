@@ -1,25 +1,18 @@
 <?php 
-    $server="localhost";
-    $user="root";
-    $pass="";
-    $db="dacs2";
-    try {
-        $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        echo "Lỗi: " .$e->getMessage();
-    }
+    require_once 'classes/connectMySql.php';
+    require_once 'classes/users.php';
+    require_once 'classes/carts.php';
+    require_once 'classes/comments.php';
+    require_once 'classes/sanphams.php';
+    require_once 'classes/bill.php';
+    require_once 'classes/messages.php';
 
     if (isset($_COOKIE["userid"])) {
         $userid=$_COOKIE["userid"];
-    }
 
-    $sql="SELECT * FROM messages WHERE senderid=:senderid or receiverid=:receiverid ";
-    $stmt=$conn->prepare($sql);
-    $stmt->bindParam(':senderid', $userid);
-    $stmt->bindParam(':receiverid', $userid);
-    $stmt->execute();
-    $result=$stmt->fetchAll(PDO::FETCH_ASSOC);  
+        $messages = new Messages();
+        $listMessage = $messages->getMessages($userid);
+    }
 ?>
 
     <div id="logo-chat">
@@ -43,17 +36,19 @@
         <div class="center">
             <h3><i>Cake shop - Liên hệ để giải đáp thắc mắc</i></h3>
             <?php 
-                foreach ($result as $row) {
-                    if ($row["senderid"]==$userid) {
-                        echo '<div class="send">' .$row["content"]. '</div>';
-                    } else {
-                        echo '<div class="receive">' .$row["content"]. '</div>';
+                if (isset($listMessage)) {
+                    foreach ($listMessage as $row) {
+                        if ($row["senderid"]==$userid) {
+                            echo '<div class="send">' .$row["content"]. '</div>';
+                        } else {
+                            echo '<div class="receive">' .$row["content"]. '</div>';
+                        }
                     }
                 }
             ?>
         </div>
         <div class="bottom">
-            <form class="box-message" action="/ĐACS2_NEW/user/handle/handleContact.php" method="post">
+            <form class="box-message" action="/CuoiKiWeb/user/handle/handleContact.php" method="post">
                 <div class="bottom-input">
                     <input type="text" placeholder="Aa" name="content" required>
                     <button type="submit" name="send-mess"><i class="far fa-paper-plane"></i></button>

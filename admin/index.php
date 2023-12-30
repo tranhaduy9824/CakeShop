@@ -10,38 +10,30 @@
 </head> 
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once 'classes/connectMySql.php';
+        require_once 'classes/admins.php';
+        require_once 'classes/users.php';
+        require_once 'classes/bill.php';
+        require_once 'classes/messages.php';
+        require_once 'classes/sanphams.php';
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $admins = new Admins();
 
-            if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["login-admin"])) {
-                $adminname=$_POST["username"];
-                $password=$_POST["password"];
+        if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["login-admin"])) {
+            $adminname=$_POST["username"];
+            $password=$_POST["password"];
 
-                $sql="SELECT * FROM admins WHERE adminname=:adminname and password=:password";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':adminname', $adminname);
-                $stmt->bindParam(':password', $password);
-                $stmt->execute();
-                $result=$stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $admins->handleLogin($adminname, $password);
 
-                if ($result) {
-                    setcookie('adminid', $result["adminid"], time() + 86400, '/');
-                    setcookie('adminname', $result["adminname"], time() + 86400, '/');
-                    setcookie('adminfullname', $result["fullname"], time() + 86400, '/');
-                    setcookie('role', $result["role"], time() + 86400, '/');
-                    echo '<script>alert("Đăng nhập thành công");window.location.href="page/index.php";</script>';
-                } else {
-                    echo '<script>alert("Tài khoản hoặc mật khẩu không đúng")</script>';
-                }
+            if ($result) {
+                setcookie('adminid', $result["adminid"], time() + 86400, '/');
+                setcookie('adminname', $result["adminname"], time() + 86400, '/');
+                setcookie('adminfullname', $result["fullname"], time() + 86400, '/');
+                setcookie('role', $result["role"], time() + 86400, '/');
+                echo '<script>alert("Đăng nhập thành công");window.location.href="page/index.php";</script>';
+            } else {
+                echo '<script>alert("Tài khoản hoặc mật khẩu không đúng")</script>';
             }
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
         }
     ?>
 
@@ -50,7 +42,7 @@
         <div class="box-login">
             <div class="login">
                 <div class="img-login">
-                    <img src="/ĐACS2_NEW/admin/img/login.jpg" alt="">
+                    <img src="/CuoiKiWeb/admin/img/login.jpg" alt="">
                 </div>
                 <div class="form-login">
                     <h2>Đăng nhập hệ thống quản lí</h2>

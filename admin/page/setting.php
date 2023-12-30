@@ -11,17 +11,14 @@
 </head>
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage(); 
-        }
+        $admins = new Admins();
 
         if ($_COOKIE["adminid"]) {
             $adminid=$_COOKIE["adminid"];
@@ -31,11 +28,7 @@
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['avt'])) {
             $avt=file_get_contents($_FILES['avt']['tmp_name']);
 
-            $sql = "UPDATE admins SET avt=:avt WHERE adminid=:adminid";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':adminid', $adminid);
-            $stmt->bindParam(':avt', $avt);
-            $stmt->execute();
+            $admins->changeAvt($adminid, $avt);
 
             setcookie('avt', $avt, time() + 86400, '/');
 
@@ -48,13 +41,7 @@
             $email = $_POST["email"];
             $phone = $_POST["phone"];
 
-            $sql = "UPDATE admins SET fullname=:fullname, email=:email, phone=:phone WHERE adminid=:adminid";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':fullname', $fullname);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':phone', $phone);
-            $stmt->bindParam(':adminid', $adminid);
-            $stmt->execute();
+            $admins->changeInfo($fullname, $email, $phone, $adminid);
 
             header("Location: setting.php");
             exit();
@@ -65,13 +52,9 @@
             $confirmPassword = $_POST["confirmPassword"];
 
             if ($password === $confirmPassword) {
-                $sql = "UPDATE admins SET password=:password WHERE adminid=:adminid";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':password', $password);
-                $stmt->bindParam(':adminid', $adminid);
-                $stmt->execute();
+                $admins->changePassWord($password, $adminid);
                                 
-                echo '<script>alert("Đổi mật khẩu thành công");window.location.href="/ĐACS2_NEW/admin/page/setting.php";</script>';
+                echo '<script>alert("Đổi mật khẩu thành công");window.location.href="/CuoiKiWeb/admin/page/setting.php";</script>';
             }
         }
 
@@ -84,15 +67,7 @@
                 $email = $_POST["email"];
                 $phone = $_POST["phone"];
     
-                $sql= "UPDATE admins SET adminname=:adminname, fullname=:fullname, email=:email, password=:password, phone=:phone WHERE adminid=:adminid";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':adminid', $adminid);
-                $stmt->bindParam(':fullname', $fullname);
-                $stmt->bindParam(':adminname', $adminname);
-                $stmt->bindParam(':password', $password);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':phone', $phone);
-                $stmt->execute();
+                $admins->changeInfoStaff($adminid, $fullname, $adminname, $password, $email, $phone);
     
                 header("Location: setting.php");
                 exit();
@@ -106,29 +81,18 @@
                 $phone = $_POST["phone"];
                 $role = "staff";
     
-                $sql = "INSERT INTO admins (adminname, fullname, email, password, phone, role) VALUES (:adminname, :fullname, :email, :password, :phone, :role)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':fullname', $fullname);
-                $stmt->bindParam(':adminname', $adminname);
-                $stmt->bindParam(':password', $password);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':phone', $phone);
-                $stmt->bindParam(':role', $role);
-                $stmt->execute();
+                $admins->setStaff($fullname, $adminname, $password, $email, $phone, $role);
     
-                echo '<script>alert("Thêm nhân viên thành công");window.location.href="/ĐACS2_NEW/admin/page/setting.php";</script>';
+                echo '<script>alert("Thêm nhân viên thành công");window.location.href="/CuoiKiWeb/admin/page/setting.php";</script>';
             }
     
             if (isset($_GET['delete'])) {
                 $adminid = $_GET['delete'];
     
                 if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
-                    $sql="DELETE FROM admins WHERE adminid=:adminid";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':adminid', $adminid);
-                    $stmt->execute();
+                    $admins->deleteStaff($adminid);
     
-                    echo '<script>alert("Xóa nhân viên thành công");window.location.href="/ĐACS2_NEW/admin/page/setting.php";</script>';
+                    echo '<script>alert("Xóa nhân viên thành công");window.location.href="/CuoiKiWeb/admin/page/setting.php";</script>';
                 }
             }
         }
@@ -142,22 +106,18 @@
         <!-- Content -->
         <div id="content">
             <?php 
-                $sql="SELECT * FROM admins WHERE adminid=:adminid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':adminid', $adminid);
-                $stmt->execute();
-                $result=$stmt->fetch(PDO::FETCH_ASSOC);
+                $listAdmin = $admins->getAdminById($adminid);
             ?>
             <div class="row1">
                 <h1>Thông tin cá nhân</h1>
                 <div class="box-avt-info">
                     <div class="box-avt">
                         <?php 
-                            if (empty($result["avt"])) {
-                                echo '<img src="/ĐACS2_NEW/admin/img/avtmacdinh.jpg" alt="">';
+                            if (empty($listAdmin["avt"])) {
+                                echo '<img src="/CuoiKiWeb/admin/img/avtmacdinh.jpg" alt="">';
                             }
                             else {
-                                $avt = $result["avt"];
+                                $avt = $listAdmin["avt"];
                                 $infoavt = getimagesizefromstring($avt);
                                 if (!empty($infoavt['mime'])) {
                                     $mime = $infoavt['mime'];
@@ -171,23 +131,23 @@
                         <table>
                             <tr>
                                 <th>Họ và tên:</th>
-                                <td><?php echo $result["fullname"];?></td>
+                                <td><?php echo $listAdmin["fullname"];?></td>
                             </tr>
                             <tr>
                                 <th>Tên đăng nhập:</th>
-                                <td><?php echo $result["adminname"];?></td>
+                                <td><?php echo $listAdmin["adminname"];?></td>
                             </tr>
                             <tr>
                                 <th>Email:</th>
-                                <td><?php echo $result["email"];?></td>
+                                <td><?php echo $listAdmin["email"];?></td>
                             </tr>
                             <tr>
                                 <th>Số điện thoại:</th>
-                                <td><?php echo $result["phone"];?></td>
+                                <td><?php echo $listAdmin["phone"];?></td>
                             </tr>
                             <tr>
                                 <th>Vai trò:</th>
-                                <td><?php echo $result["role"];?></td>
+                                <td><?php echo $listAdmin["role"];?></td>
                             </tr>
                         </table>
                     </div>
@@ -206,10 +166,7 @@
             </div>
 
             <?php 
-                $sql = "SELECT * FROM admins WHERE adminid<>1";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $listAdmin = $admins->getStaffs();
             ?>
             <?php if ($role === "admin") {?>
             <div class="row2">
@@ -240,18 +197,18 @@
                             <th>Chức năng</th>
                         </tr>
                         <?php 
-                            foreach ($result as $row) {
+                            foreach ($listAdmin as $row) {
                                 echo '<tr>
                                 <td>
                                     <input type="checkbox" class="checkbox-item">
                                 </td>
                                 <td>' .$row["adminid"]. '</td>
                                 <td>' .$row["fullname"]. '</td>';
-                                if (empty($result["avt"])) {
-                                    echo '<td><img src="/ĐACS2_NEW/admin/img/avtmacdinh.jpg" alt=""></td>';
+                                if (empty($listAdmin["avt"])) {
+                                    echo '<td><img src="/CuoiKiWeb/admin/img/avtmacdinh.jpg" alt=""></td>';
                                 }
                                 else {
-                                    $avt = $result["avt"];
+                                    $avt = $listAdmin["avt"];
                                     $infoavt = getimagesizefromstring($avt);
                                     if (!empty($infoavt['mime'])) {
                                         $mime = $infoavt['mime'];
@@ -279,12 +236,8 @@
     </div>
 
     <?php 
-        $sql="SELECT * FROM admins WHERE adminid=:adminid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':adminid', $adminid);
-        $stmt->execute();
-        $result=$stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
+        $listAdmin = $admins->getAdminById($adminid);
+        if ($listAdmin) {
     ?>
     <!-- Model change info -->
     <div id="model-change-info">
@@ -294,25 +247,25 @@
                 <div class="row-change">
                     <div>
                         <label for="">ID</label>
-                        <input type="hidden" name="adminid" value="<?php echo $result["adminid"];?>">
-                        <input type="number" disabled name="adminid" value="<?php echo $result["adminid"];?>">
+                        <input type="hidden" name="adminid" value="<?php echo $listAdmin["adminid"];?>">
+                        <input type="number" disabled name="adminid" value="<?php echo $listAdmin["adminid"];?>">
                     </div>
                     <div>
                         <label for="">Họ và tên</label>
-                        <input type="text" name="fullname" required value="<?php echo $result["fullname"]?>">
+                        <input type="text" name="fullname" required value="<?php echo $listAdmin["fullname"]?>">
                     </div>
                     <div>
                         <label for="">Email</label>
-                        <input type="email" name="email" required value="<?php echo $result["email"]?>">
+                        <input type="email" name="email" required value="<?php echo $listAdmin["email"]?>">
                     </div>
                     <div>
                         <label for="">Số điện thoại</label>
-                        <input type="phone" name="phone" required value="<?php echo $result["phone"]?>">
+                        <input type="phone" name="phone" required value="<?php echo $listAdmin["phone"]?>">
                     </div>
                 </div>
                 <div class="save-cancel">   
                     <button type="submit" name="changeinfo">Lưu lại</button>
-                    <a href="/ĐACS2_NEW/admin/page/setting.php">Hủy bỏ</a>
+                    <a href="/CuoiKiWeb/admin/page/setting.php">Hủy bỏ</a>
                 </div>
             </div>
         </form>
@@ -335,7 +288,7 @@
                 </div>
                 <div class="save-cancel">   
                     <button type="submit" name="changepass">Lưu lại</button>
-                    <a href="/ĐACS2_NEW/admin/page/setting.php">Hủy bỏ</a>
+                    <a href="/CuoiKiWeb/admin/page/setting.php">Hủy bỏ</a>
                 </div>
             </div>
         </form>
@@ -346,12 +299,8 @@
         if (isset($_GET["adminid"])) {
             $adminid=$_GET["adminid"];
         }
-        $sql="SELECT * FROM admins WHERE adminid=:adminid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':adminid', $adminid);
-        $stmt->execute();
-        $result=$stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
+        $listAdmin = $admins->getAdminById($adminid);
+        if ($listAdmin) {
     ?>
     <?php if ($role === "admin") {?>
     <!-- Model edit staff -->
@@ -362,40 +311,40 @@
                 <div class="row-edit">
                     <div>
                         <label for="">Mã nhân viên</label>
-                        <input type="hidden" name="adminid" value="<?php echo $result["adminid"];?>">
-                        <input type="number" disabled name="adminid" value="<?php echo $result["adminid"];?>">
+                        <input type="hidden" name="adminid" value="<?php echo $listAdmin["adminid"];?>">
+                        <input type="number" disabled name="adminid" value="<?php echo $listAdmin["adminid"];?>">
                     </div>
                     <div>
                         <label for="">Họ và tên</label>
-                        <input type="text" name="fullname" required value="<?php echo $result["fullname"]?>">
+                        <input type="text" name="fullname" required value="<?php echo $listAdmin["fullname"]?>">
                     </div>
                     <div>
                         <label for="">Tên đăng nhập</label>
-                        <input type="text" name="adminname" required value="<?php echo $result["adminname"]?>">
+                        <input type="text" name="adminname" required value="<?php echo $listAdmin["adminname"]?>">
                     </div>
                     <div>
                         <label for="">Mật khẩu</label>
-                        <input type="text" name="password" required value="<?php echo $result["password"]?>">
+                        <input type="text" name="password" required value="<?php echo $listAdmin["password"]?>">
                     </div>
                     <div>
                         <label for="">Email</label>
-                        <input type="email" name="email" required value="<?php echo $result["email"]?>">
+                        <input type="email" name="email" required value="<?php echo $listAdmin["email"]?>">
                     </div>
                     <div>
                         <label for="">Số điện thoại</label>
-                        <input type="text" name="phone" required value="<?php echo $result["phone"]?>">
+                        <input type="text" name="phone" required value="<?php echo $listAdmin["phone"]?>">
                     </div>
                     <div>
                         <label for="role">Vai trò</label>
                         <select name="role" id="role" required>
-                            <option disabled value="admin" <?php if ($result["role"]=="admin") echo 'selected';?>>Admin</option>
-                            <option value="staff" <?php if ($result["role"]=="staff") echo 'selected';?>>Staff</option>
+                            <option disabled value="admin" <?php if ($listAdmin["role"]=="admin") echo 'selected';?>>Admin</option>
+                            <option value="staff" <?php if ($listAdmin["role"]=="staff") echo 'selected';?>>Staff</option>
                         </select>
                     </div>
                 </div>
                 <div class="save-cancel">   
                     <button type="submit" name="editStaff">Lưu lại</button>
-                    <a href="/ĐACS2_NEW/admin/page/setting.php">Hủy bỏ</a>
+                    <a href="/CuoiKiWeb/admin/page/setting.php">Hủy bỏ</a>
                 </div>
             </div>
         </form>
@@ -432,7 +381,7 @@
                 </div>
                 <div class="save-cancel">   
                     <button type="submit" name="addStaff">Lưu lại</button>
-                    <a href="/ĐACS2_NEW/admin/page/setting.php">Hủy bỏ</a>
+                    <a href="/CuoiKiWeb/admin/page/setting.php">Hủy bỏ</a>
                 </div>
             </div>
         </form>

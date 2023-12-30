@@ -6,19 +6,22 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/gioithieu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/cart.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/contact.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/cart.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/users.php';
+        require_once '../classes/carts.php';
+        require_once '../classes/comments.php';
+        require_once '../classes/sanphams.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
 
         if (isset($_COOKIE["userid"])) {
             $userid=$_COOKIE["userid"];
@@ -28,23 +31,14 @@
             $idsp=$_GET["idsp"];
         }
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
-
-        $sql="SELECT * FROM carts WHERE userid=:userid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
         $opendetailcart=0;
-        
-        if (count($result)>0) {
-            $opendetailcart=count($result);
+        if (isset($_COOKIE["userid"])) {
+            $carts = new Carts();
+            $listCart = $carts->getCartByUserId($userid);
+            
+            if (count($listCart)>0) {
+                $opendetailcart=count($listCart);
+            }
         }
     ?>
 
@@ -57,15 +51,15 @@
         <div id="intro">
             <div class="box-intro">
                 <div class="img-intro">
-                    <img src="/ĐACS2_NEW/user/assets/img/Giới thiệu/a1.png" alt="">
+                    <img src="/CuoiKiWeb/user/assets/img/Giới thiệu/a1.png" alt="">
                 </div>
                 <div class="content-intro">
                     <h1>Giới thiệu</h1>
-                    <img src="/ĐACS2_NEW/user/assets/img/Gioithieu.png" alt="">
+                    <img src="/CuoiKiWeb/user/assets/img/Gioithieu.png" alt="">
                     <p>
                         Được biết đến như một kiểu mẫu ẩm thực Pháp, những chiếc bánh của chúng tôi không chỉ gói trọn nét duyên dáng & tinh tế của ẩm thực phương Tây mà còn là “biểu tượng” của lòng quan tâm, sự chăm sóc dịu dàng Bạn muốn gửi trao.
                     </p>
-                    <img src="/ĐACS2_NEW/user/assets/img/Giới thiệu/a2.jpg" alt="">
+                    <img src="/CuoiKiWeb/user/assets/img/Giới thiệu/a2.jpg" alt="">
                     <p>
                         Đặt tiêu chí “Chất lượng” là ưu tiên hàng đầu, chúng tôi không ngừng cải tiến, phát triển và hoàn thiện bằng những hành động rõ ràng và cụ thể như – Cơ sở vật chất khang trang, nhà xưởng hiện đại và đạt tiêu chuẩn qua những chứng nhận có giá trị ISO – HACCP. Và trên hết, là sự công nhận tin yêu ngày càng lớn của Bạn đối với chúng tôi.
                     </p>
@@ -79,8 +73,8 @@
                     </p>
                     <br>
                     <div>
-                        <img src="/ĐACS2_NEW/user/assets/img/Giới thiệu/a3.jpg" alt="">
-                        <img src="/ĐACS2_NEW/user/assets/img/Giới thiệu/a4.jpg" alt="">
+                        <img src="/CuoiKiWeb/user/assets/img/Giới thiệu/a3.jpg" alt="">
+                        <img src="/CuoiKiWeb/user/assets/img/Giới thiệu/a4.jpg" alt="">
                     </div>
                 </div>
             </div>
@@ -98,7 +92,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-    <script src="/ĐACS2_NEW/user/contact.js"></script>
+    <script src="/CuoiKiWeb/user/contact.js"></script>
     <script>
         var btncart=document.querySelector('.cart');
         var boxcart=document.querySelector('.box-cart');
@@ -115,12 +109,12 @@
         var btnpays=document.querySelectorAll('.btn-pay');
         for (const btndetail of btndetails) {
         btndetail.addEventListener('click', function() {
-            window.location.href="/ĐACS2_NEW/user/handle/info.php"
+            window.location.href="/CuoiKiWeb/user/handle/info.php"
         });
         };
         for (const btnpay of btnpays) {
         btnpay.addEventListener('click', function() {
-            window.location.href="/ĐACS2_NEW/user/handle/info.php?numberpay=change";
+            window.location.href="/CuoiKiWeb/user/handle/info.php?numberpay=change";
         });
         };
     </script>

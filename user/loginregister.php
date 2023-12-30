@@ -6,119 +6,101 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/css/loginregister.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/cart.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/CuoiKiWeb/user/assets/css/cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once 'classes/connectMySql.php';
+        require_once 'classes/users.php';
+        require_once 'classes/carts.php';
+        require_once 'classes/comments.php';
+        require_once 'classes/sanphams.php';
+        require_once 'classes/bill.php';
+        require_once 'classes/messages.php';
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $connect = new ConnectMySql();
+        $conn = $connect->getConnection();
 
-            if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['register'])) {
-                $username=$_POST['username'];
-                $fullname=$_POST['fullname'];
-                $email=$_POST['email'];
-                $password=$_POST['password'];
-                $confirm=$_POST['confirm'];
-                $phone=$_POST['phone'];
-                $status=0;
+        if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['register'])) {
+            $username=$_POST['username'];
+            $fullname=$_POST['fullname'];
+            $email=$_POST['email'];
+            $password=$_POST['password'];
+            $confirm=$_POST['confirm'];
+            $phone=$_POST['phone'];
+            $status=0;
 
-                if ($password===$confirm) {
-                    if (preg_match("/^\d{10}$/", $phone)) {
-                        $sql="SELECT * FROM users WHERE username=:username or email=:email or phone=:phone";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':username', $username);
-                        $stmt->bindParam(':email', $email);
-                        $stmt->bindParam(':phone', $phone);
-                        $stmt->execute();
-                        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                        if (count($result)==0) {
-                            $sql="INSERT INTO users (username, fullname, email, password, phone, status) VALUES (:username, :fullname, :email, :password, :phone, :status)";
-                            $stmt=$conn->prepare($sql);
-                            $stmt->bindParam(':username', $username);
-                            $stmt->bindParam(':fullname', $fullname);
-                            $stmt->bindParam(':email', $email);
-                            $stmt->bindParam(':password', $password);
-                            $stmt->bindParam(':phone', $phone);
-                            $stmt->bindParam(':status', $status);
-                            $stmt->execute();
-                            echo '<script>alert("Đăng ký thành công")</script>';
-                        } else if (count($result)>0){
-                            if ($result[0]["username"]==$username) {
-                                echo '<script>alert("Tên đăng nhập đã tồn tại")</script>';
-                            } else if ($result[0]["email"]==$email) {
-                                echo '<script>alert("Email đã tồn tại")</script>';
-                            }
-                            else {
-                                echo '<script>alert("Số điện thoại đã tồn tại")</script>';
-                            }
+            if ($password===$confirm) {
+                if (preg_match("/^\d{10}$/", $phone)) {
+                    $users = new Users();
+                    $checkUser = $users->checkUser($username, $email, $phone);
+                    if (count($checkUser)==0) {
+                        $users->addUser($username, $fullname, $email, $password, $phone, $status);
+                        echo '<script>alert("Đăng ký thành công")</script>';
+                    } else if (count($checkUser)>0){
+                        if ($checkUser[0]["username"]==$username) {
+                            echo '<script>alert("Tên đăng nhập đã tồn tại")</script>';
+                        } else if ($checkUser[0]["email"]==$email) {
+                            echo '<script>alert("Email đã tồn tại")</script>';
                         }
-                    } else {    
-                        echo '<script>alert("Số điện thoại không chính xác")</script>';
+                        else {
+                            echo '<script>alert("Số điện thoại đã tồn tại")</script>';
+                        }
                     }
-                }
-                else {
-                    echo '<script>alert("Mật khẩu không trùng nhau")</script>';
-                }
-            }
-
-            if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['login'])) {
-                $username=$_POST["username"];
-                $password=$_POST["password"];
-
-                $sql="SELECT * FROM users WHERE username=:username and password=:password";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':username', $username);
-                $stmt->bindParam(':password', $password);
-                $stmt->execute();
-                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                if (count($result)>0) {
-                    echo '<script>alert("Đăng nhập thành công")</script>';
-                    $userid=$result[0]["userid"];
-                    $username=$result[0]["username"];
-                    $fullname=$result[0]["fullname"];
-                    $email=$result[0]["email"];
-                    $password=$result[0]["password"];
-                    $phone=$result[0]["phone"];
-                    $status=$result[0]["status"];
-                    setcookie('userid', $userid, time() + 86400, '/');
-                    setcookie('username', $username, time() + 86400, '/');
-                    setcookie('fullname', $fullname, time() + 86400, '/');
-                    setcookie('email', $email, time() + 86400, '/');
-                    setcookie('password', $password, time() + 86400, '/');
-                    setcookie('phone', $phone, time() + 86400, '/');
-                    setcookie('status', $status, time() + 86400, '/');
-
-                    header("Location: index.php");
-                    exit();
-                }
-                else {
-                    echo '<script>alert("Đăng nhập thất bại")</script>';
+                } else {    
+                    echo '<script>alert("Số điện thoại không chính xác")</script>';
                 }
             }
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
+            else {
+                echo '<script>alert("Mật khẩu không trùng nhau")</script>';
+            }
         }
 
-        $sql="SELECT * FROM carts WHERE userid=:userid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST['login'])) {
+            $username=$_POST["username"];
+            $password=$_POST["password"];
+
+            $users = new Users();
+            $checkLogin = $users->checkLogin($username, $password);
+            if ($checkLogin) {
+                echo '<script>alert("Đăng nhập thành công")</script>';
+                $userid=$checkLogin["userid"];
+                $username=$checkLogin["username"];
+                $fullname=$checkLogin["fullname"];
+                $email=$checkLogin["email"];
+                $password=$checkLogin["password"];
+                $phone=$checkLogin["phone"];
+                $status=$checkLogin["status"];
+                setcookie('userid', $userid, time() + 86400, '/');
+                setcookie('username', $username, time() + 86400, '/');
+                setcookie('fullname', $fullname, time() + 86400, '/');
+                setcookie('email', $email, time() + 86400, '/');
+                setcookie('password', $password, time() + 86400, '/');
+                setcookie('phone', $phone, time() + 86400, '/');
+                setcookie('status', $status, time() + 86400, '/');
+
+                header("Location: index.php");
+                exit();
+            }
+            else {
+                echo '<script>alert("Đăng nhập thất bại")</script>';
+            }
+        }
+
+        if (isset($userid)) {
+            $userid = $userid;
+            $carts = new Carts();
+            $listCart = $carts->getCartByUserId($userid);
+        }
         $opendetailcart=0;
         
-        if (count($result)>0) {
-            $opendetailcart=count($result);
-        }
+        // if (count($listCart)>0) {
+        //     $opendetailcart=count($result);
+        // }
     ?>
 
     <!-- Menu -->
@@ -160,7 +142,7 @@
                                 Facebook
                             </div>
                         </div>
-                        <div class="forgotpass"><a href="/ĐACS2_NEW/user/handle/forgotpass.php">Quên mật khẩu?</a></div>
+                        <div class="forgotpass"><a href="/CuoiKiWeb/user/handle/forgotpass.php">Quên mật khẩu?</a></div>
                     </form>
                 </div>
             </div>
@@ -263,12 +245,12 @@
         var btnpays=document.querySelectorAll('.btn-pay');
         for (const btndetail of btndetails) {
         btndetail.addEventListener('click', function() {
-            window.location.href="/ĐACS2_NEW/user/handle/info.php"
+            window.location.href="/CuoiKiWeb/user/handle/info.php"
         });
         };
         for (const btnpay of btnpays) {
         btnpay.addEventListener('click', function() {
-            window.location.href="/ĐACS2_NEW/user/handle/info.php?numberpay=change";
+            window.location.href="/CuoiKiWeb/user/handle/info.php?numberpay=change";
         });
         };
     </script>

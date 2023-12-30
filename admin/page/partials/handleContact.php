@@ -1,29 +1,20 @@
 <?php
     function sendMessage() {
-        $server = "localhost";
-        $user = "root";
-        $pass = "";
-        $db = "dacs2";
-        try {
-            $conn = new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " . $e->getMessage();
-            exit; 
-        }
+        require_once '../../classes/connectMySql.php';
+        require_once '../../classes/admins.php';
+        require_once '../../classes/users.php';
+        require_once '../../classes/bill.php';
+        require_once '../../classes/messages.php';
+        require_once '../../classes/sanphams.php';
+
+        $messages = new Messages();
 
         $adminid = (isset($_COOKIE["adminid"])) ? $_COOKIE["adminid"] : null; 
         $content = $_POST["content"];
         $userid = $_POST["userid"];
         $roleSender = "admin";
 
-        $sql = "INSERT INTO messages (senderid, roleSender, receiverid, content) VALUES (:senderid, :roleSender, :receiverid, :content)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':senderid', $adminid);
-        $stmt->bindParam(':roleSender', $roleSender);
-        $stmt->bindParam(':receiverid', $userid);
-        $stmt->bindParam(':content', $content);
-        $stmt->execute();
+        $messages->setMessage($adminid, $roleSender, $userid, $content);
 
         echo json_encode(["success" => true, "message" => $content]); 
     }

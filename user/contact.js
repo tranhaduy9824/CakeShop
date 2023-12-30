@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (var i = 0; i < userDivs.length; i++) {
         userDivs[i].addEventListener("click", function() {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/ĐACS2_NEW/user/contact.php", true);
+            xhr.open("GET", "/CuoiKiWeb/user/contact.php", true);
             xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                 var responseHTML = document.createElement('div');
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var formData = new FormData(form);
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/ĐACS2_NEW/user/handle/handleContact.php', true);
+            xhr.open('POST', '/CuoiKiWeb/user/handle/handleContact.php', true);
             xhr.responseType = 'json';
 
             xhr.onload = function() {
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function getPreviousMessageId(callback) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/ĐACS2_NEW/user/handle/getLastMessageId.php", true);
+        xhr.open("GET", "/CuoiKiWeb/user/handle/getLastMessageId.php", true);
         xhr.responseType = "json";
     
         xhr.onload = function() {
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Nhận tin nhắn mới
     function receiveMessages() {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/ĐACS2_NEW/user/handle/getMessage.php", true);
+        xhr.open("GET", "/CuoiKiWeb/user/handle/getMessage.php", true);
         xhr.responseType = "json";
     
         xhr.onload = function() {

@@ -11,44 +11,36 @@
 </head>
 <body>
     <?php
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
+
+        $bill = new Bill();
+        $users = new Users();
 
         if (isset($_COOKIE["role"])) {
             $role = $_COOKIE["role"];
+        }
+
+        if (isset($_COOKIE["userid"])) {
+            $userid = $_COOKIE["userid"];
+        }
+
+        
+        if (isset($_GET["search"])) {
+            $search = $_GET["search"];
         }
 
         if (isset($_COOKIE["role"]) && $_COOKIE["role"]=="admin") {
             if (isset($_GET["delete"]) && $_GET["confirm"] == true) {
                 $userid = $_GET["delete"];
     
-                $sql="SELECT * FROM bill WHERE userid=:userid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam('userid', $userid);
-                $stmt->execute();
-                $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-                if (count($result)==0) {
-                    $sql1 = "DELETE FROM carts WHERE userid=:userid";
-                    $sql2 = "DELETE FROM comments WHERE userid=:userid";
-                    $sql3 = "DELETE FROM users WHERE userid=:userid";
-                
-                    $stmt1 = $conn->prepare($sql1);
-                    $stmt2 = $conn->prepare($sql2);
-                    $stmt3 = $conn->prepare($sql3);
-                    $stmt1->bindParam(':userid', $userid);
-                    $stmt2->bindParam(':userid', $userid);
-                    $stmt3->bindParam(':userid', $userid);
-                    $stmt1->execute();
-                    $stmt2->execute();
-                    $stmt3->execute();
+                $listBill = $bill->getBillByUserId($userid);
+                if (count($listBill)==0) {
+                    $users->deleteUserByUserId($userid);
                 } else {
                     echo '<script>alert("Người dùng đang có đơn hàng, không thể xóa!"); window.location.href="user-mng.php";</script>';
                 }
@@ -58,11 +50,7 @@
                 $userid=$_GET["block"];
                 $status=1;
     
-                $sql="UPDATE users SET status=:status WHERE userid=:userid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':status', $status);
-                $stmt->bindParam('userid', $userid);
-                $stmt->execute();
+                $users->handleBlock($status, $userid);
 
                 header("Location: user-mng.php");
                 exit();
@@ -72,11 +60,7 @@
                 $userid=$_GET["openblock"];
                 $status=0;
     
-                $sql="UPDATE users SET status=:status WHERE userid=:userid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':status', $status);
-                $stmt->bindParam('userid', $userid);
-                $stmt->execute();
+                $users->handleBlock($status, $userid);
 
                 header("Location: user-mng.php");
                 exit();
@@ -90,15 +74,7 @@
                 $email=$_POST["email"];
                 $phone=$_POST["phone"];
     
-                $sql="UPDATE users SET username=:username, fullname=:fullname, email=:email, password=:password, phone=:phone WHERE userid=:userid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':userid', $userid);
-                $stmt->bindParam(':username', $username);
-                $stmt->bindParam(':fullname', $fullname);
-                $stmt->bindParam(':password', $password);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':phone', $phone);
-                $stmt->execute();
+                $users->changeInfoUser($userid, $username, $fullname, $password, $email, $phone);
     
                 header("Location: user-mng.php");
                 exit();
@@ -121,19 +97,7 @@
             $page=isset($_GET["page"]) ? $_GET["page"] : 1;
             $start=($page-1)*$limit;
 
-            if (!empty($_GET["search"])) {
-                $search=$_GET["search"];
-                $sql="SELECT * FROM users WHERE fullname LIKE :search LIMIT :start, :limit";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindValue(':search', '%' .$search. '%');
-            } else {
-                $sql="SELECT * FROM users LIMIT :start, :limit";
-                $stmt=$conn->prepare($sql);
-            }
-            $stmt->bindParam(':start', $start, PDO::PARAM_INT);
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->execute();
-            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            $listUser = $users->searchUser($start, $limit);
         ?>
         <!-- Content -->
         <div id="content">
@@ -189,7 +153,7 @@
                             <th>Chức năng</th>
                         </tr>
                         <?php 
-                            foreach ($result as $row) {
+                            foreach ($listUser as $row) {
                                 echo '<tr>
                                 <td>
                                     <input type="checkbox" class="checkbox-item">
@@ -233,16 +197,13 @@
                     </table>
                 </div>
                 <?php 
-                    $sql="SELECT * FROM users";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->execute();
-                    $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $listUser = $users->getUsers();
                 ?>
                 <div class="change-page">
-                    <p>Hiện <?php echo $start+1;?> đến <?php if (count($result)>$start+$limit) echo $start+$limit; else echo count($result);?> của <?php echo count($result);?> danh mục</p>
+                    <p>Hiện <?php echo $start+1;?> đến <?php if (count($listUser)>$start+$limit) echo $start+$limit; else echo count($listUser);?> của <?php echo count($listUser);?> danh mục</p>
                     <div class="btn-change">
                         <?php 
-                            for ($i=1;$i<=ceil((count($result)/$limit));$i++) {
+                            for ($i=1;$i<=ceil((count($listUser)/$limit));$i++) {
                                 echo '<div><a class="edit-link" href="user-mng.php?page=' .$i. '">' .$i. '</a></div>';
                             }
                         ?>
@@ -255,13 +216,9 @@
     <?php 
         if (isset($_GET["userid"])) {
             $userid=$_GET["userid"];
+            $listUser = $users->getUserById($userid);
         }
-        $sql="SELECT * FROM users WHERE userid=:userid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
+        if ($listUser) {
     ?>
 
     <?php if ($role === "admin") {?>
@@ -273,28 +230,28 @@
                 <div class="row-edit">
                     <div>
                         <label for="">Mã người dùng</label>
-                        <input type="hidden" name="userid" value="<?php echo $result["userid"];?>">
-                        <input type="number" disabled name="userid" value="<?php echo $result["userid"];?>">
+                        <input type="hidden" name="userid" value="<?php echo $listUser["userid"];?>">
+                        <input type="number" disabled name="userid" value="<?php echo $listUser["userid"];?>">
                     </div>
                     <div>
                         <label for="">Tên đăng nhập</label>
-                        <input type="text" name="username" required value="<?php echo $result["username"]?>">
+                        <input type="text" name="username" required value="<?php echo $listUser["username"]?>">
                     </div>
                     <div>
                         <label for="">Họ và tên</label>
-                        <input type="text" name="fullname" required value="<?php echo $result["fullname"]?>">
+                        <input type="text" name="fullname" required value="<?php echo $listUser["fullname"]?>">
                     </div>
                     <div>
                         <label for="">Mật khẩu</label>
-                        <input type="text" name="password" required value="<?php echo $result["password"]?>">
+                        <input type="text" name="password" required value="<?php echo $listUser["password"]?>">
                     </div>
                     <div>
                         <label for="">Email</label>
-                        <input type="email" name="email" required value="<?php echo $result["email"]?>">
+                        <input type="email" name="email" required value="<?php echo $listUser["email"]?>">
                     </div>
                     <div>
                         <label for="">Số điện thoại</label>
-                        <input type="phone" name="phone" required value="<?php echo $result["phone"]?>">
+                        <input type="phone" name="phone" required value="<?php echo $listUser["phone"]?>">
                     </div>
                 </div>
                 <div class="save-cancel">   
