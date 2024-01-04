@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/updatepass.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/updatepass.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
     <?php
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/users.php';
+        require_once '../classes/carts.php';
+        require_once '../classes/comments.php';
+        require_once '../classes/sanphams.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+
+        $users = new Users();
 
         $userid="";
 
@@ -28,13 +33,6 @@
             $userid=$_COOKIE["userid"];
         }
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
-
         if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["update-pass"])) {
             $userid=$_POST["userid"];
             $password=$_POST["password"];
@@ -43,12 +41,8 @@
             if (empty($userid)) {
                 echo '<script>alert("Không tìm thấy người dùng")</script>';
             } else if ($password===$confirm) {
-                $sql="UPDATE users SET password=:password WHERE userid=:userid";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':password', $password);
-                $stmt->bindParam(':userid', $userid);
-                $stmt->execute();
-                echo '<script>alert("Cập nhập mật khẩu thành công");window.location.href="/ĐACS2_NEW/user/index.php";</script>';
+                $users->changePassWord($userid, $password);
+                echo '<script>alert("Cập nhập mật khẩu thành công");window.location.href="/ĐACS2_NEW1/user/index.php";</script>';
             } else {
                 echo '<script>alert("Mật khẩu không trùng nhau")</script>';
             }

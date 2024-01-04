@@ -90,6 +90,11 @@ body {
     padding: 16px;
 }
 
+#newsp .slider .img-item .img {
+    border-radius: 100%;
+    background-color: white;
+}
+
 #newsp .slider .img-item img {
     width: 800px;
     height: 500px;
@@ -110,7 +115,6 @@ body {
     background-color: black;
     color: white;
     z-index: 2;
-    padding: 8px;
 }
 
 #newsp .slick-next {
@@ -126,7 +130,6 @@ body {
     background-color: black;
     color: white;
     z-index: 2;
-    padding: 8px;
 }
 
 /* Sản phẩm hot + mới */
@@ -339,7 +342,6 @@ body {
     background-color: black;
     color: white;
     z-index: 2;
-    padding: 8px;
 }
 
 #hotnew .slick-next {
@@ -355,7 +357,6 @@ body {
     background-color: black;
     color: white;
     z-index: 2;
-    padding: 8px;
 }
 
 /* PromoNews */
@@ -488,7 +489,6 @@ body {
     background-color: white;
     color: black;
     z-index: 2;
-    padding: 8px;
 }
 
 #review .slick-next {
@@ -504,7 +504,6 @@ body {
     background-color: white;
     color: black;
     z-index: 2;
-    padding: 8px;
 }
 
 /* Box comment */

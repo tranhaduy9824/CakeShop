@@ -1,16 +1,15 @@
 <?php
+    require_once '../classes/connectMySql.php';
+    require_once '../classes/users.php';
+    require_once '../classes/carts.php';
+    require_once '../classes/comments.php';
+    require_once '../classes/sanphams.php';
+    require_once '../classes/bill.php';
+    require_once '../classes/messages.php';
+
     function sendMessage() {
-        $server = "localhost";
-        $user = "root";
-        $pass = "";
-        $db = "dacs2";
-        try {
-            $conn = new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " . $e->getMessage();
-            exit; 
-        }
+        $connect = new ConnectMySql();
+        $conn = $connect->getConnection();
 
         $userid = (isset($_COOKIE["userid"])) ? $_COOKIE["userid"] : null; 
         $content = $_POST["content"];

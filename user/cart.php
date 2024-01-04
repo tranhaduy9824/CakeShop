@@ -1,19 +1,26 @@
+<?php 
+    require_once 'classes/connectMySql.php';
+    require_once 'classes/users.php';
+    require_once 'classes/carts.php';
+    require_once 'classes/comments.php';
+    require_once 'classes/sanphams.php';
+    require_once 'classes/bill.php';
+    require_once 'classes/messages.php';
+
+    $carts = new Carts();
+?>
         <div id="cart">
             <div class="box-cart">
                 <?php 
                     if (isset($_COOKIE["userid"]) && $opendetailcart>0) {
                         $userid=$_COOKIE["userid"];
 
-                        $sql="SELECT * FROM carts WHERE userid=:userid";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':userid', $userid);
-                        $stmt->execute();
-                        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $listCart = $carts->getCartByUserId($userid);
                         $totalcart=0;
 
                         echo '<h3>Giỏ hàng của bạn</h3>';
                         echo '<div class="top-cart">';
-                        foreach ($result as $row) {
+                        foreach ($listCart as $row) {
                         echo '<div class="item-cart">
                             <div class="img-item">';
                             $image=$row["imagesp"];
@@ -48,7 +55,7 @@
                         echo '<h3>Giỏ hàng của bạn</h3>';
                         echo '<p>Giỏ hàng của bạn chưa có sản phẩm nào</p>';
                         echo '<div class="buysp">';
-                        echo '<a href="/ĐACS2_NEW/user/pages/Sản phẩm/sanphamphan.php">Mua sản phẩm</a>';
+                        echo '<a href="/ĐACS2_NEW1/user/pages/Sản phẩm/sanphamphan.php">Mua sản phẩm</a>';
                         echo '</div>';
                     }
                 ?>

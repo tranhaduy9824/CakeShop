@@ -5,42 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/bill.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/cart.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/contact.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/bill.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/cart.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/users.php';
+        require_once '../classes/carts.php';
+        require_once '../classes/comments.php';
+        require_once '../classes/sanphams.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+
+        $sanphams = new Sanphams();
+        $carts = new Carts();
 
         if (isset($_COOKIE["userid"])) {
             $userid=$_COOKIE["userid"];
         }
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
-
-        $sql="SELECT * FROM carts WHERE userid=:userid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
         $opendetailcart=0;
-        
-        if (count($result)>0) {
-            $opendetailcart=count($result);
+        if (isset($userid)) {
+            $listCart = $carts->getCartByUserId($userid);
+            
+            if (count($listCart)>0) {
+                $opendetailcart=count($listCart);
+            }
         }
     ?>
 
@@ -145,13 +141,9 @@
                                         $parts = explode("-", $number);
                                         $idsp = $parts[0];
                                         $countsp = $parts[1];
-                                        $sql1="SELECT  * FROM sanphams WHERE idsp=:idsp";
-                                        $stmt1=$conn->prepare($sql1);
-                                        $stmt1->bindParam(':idsp', $idsp);
-                                        $stmt1->execute();
-                                        $result1=$stmt1->fetch(PDO::FETCH_ASSOC);
+                                        $listSanpham = $sanphams->getSanphamsById($idsp);
                                         echo '<tr>';
-                                        echo '<td>' .$result1["namesp"]. '</td>';
+                                        echo '<td>' .$listSanpham["namesp"]. '</td>';
                                         echo '<td>' .$countsp. '</td>';
                                         echo '</tr>';
                                     }
@@ -193,7 +185,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/ĐACS2_NEW/user/contact.js"></script>
+    <script src="/ĐACS2_NEW1/user/contact.js"></script>
     <script>
         var btncart=document.querySelector('.cart');
         var boxcart=document.querySelector('.box-cart');
@@ -210,12 +202,12 @@
         var btnpays=document.querySelectorAll('.btn-pay');
         for (const btndetail of btndetails) {
         btndetail.addEventListener('click', function() {
-            window.location.href="/ĐACS2_NEW/user/handle/info.php"
+            window.location.href="/ĐACS2_NEW1/user/handle/info.php"
         });
         };
         for (const btnpay of btnpays) {
         btnpay.addEventListener('click', function() {
-            window.location.href="/ĐACS2_NEW/user/handle/info.php?numberpay=change";
+            window.location.href="/ĐACS2_NEW1/user/handle/info.php?numberpay=change";
         });
         };
     </script>

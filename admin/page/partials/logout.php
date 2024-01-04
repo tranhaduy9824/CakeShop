@@ -11,7 +11,7 @@
         setcookie('adminname', '', time() - 3600, '/');
         setcookie('adminfullname', '', time() - 3600, '/');
         setcookie('role', '', time() - 3600, '/');
-        header("Location: /ĐACS2_NEW/admin/index.php");
+        header("Location: /ĐACS2_NEW1/admin/index.php");
         exit();
     ?>
 </body>

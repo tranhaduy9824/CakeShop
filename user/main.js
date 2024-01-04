@@ -191,11 +191,11 @@ var btndetails=document.querySelectorAll('.btn-detail');
 var btnpays=document.querySelectorAll('.btn-pay');
 for (const btndetail of btndetails) {
   btndetail.addEventListener('click', function() {
-    window.location.href="/ĐACS2_NEW/user/handle/info.php"
+    window.location.href="/ĐACS2_NEW1/user/handle/info.php"
   });
 };
 for (const btnpay of btnpays) {
   btnpay.addEventListener('click', function() {
-    window.location.href="/ĐACS2_NEW/user/handle/info.php?numberpay=change";
+    window.location.href="/ĐACS2_NEW1/user/handle/info.php?numberpay=change";
   });
 };

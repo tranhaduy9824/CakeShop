@@ -11,19 +11,21 @@
 </head>
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage(); 
-        }
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
+
+        $sanphams =new Sanphams();
 
         if (isset($_COOKIE["role"])) {
             $role = $_COOKIE["role"];
+        }
+
+        if (isset($_GET["search"]) && !empty($_GET["search"])) {
+            $search = $_GET['search'];
         }
 
         if (isset($_COOKIE["role"]) && $_COOKIE["role"]=="admin") {
@@ -31,10 +33,7 @@
                 $idsp = $_GET['delete'];
     
                 if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
-                    $sql="DELETE FROM sanphams WHERE idsp=:idsp";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':idsp', $idsp);
-                    $stmt->execute();
+                    $sanphams->deleteSanpham($idsp);
     
                     header("Location: product-mng.php");
                     exit();
@@ -49,22 +48,7 @@
                 $type=$_POST["type"];
                 $dessp=$_POST["dessp"];
     
-                if (!empty($_FILES['imagesp']['tmp_name'])) {
-                    $imagesp=file_get_contents($_FILES['imagesp']['tmp_name']);
-                    $sql="UPDATE sanphams SET imagesp=:imagesp, namesp=:namesp, dessp=:dessp, price=:price, ribbon=:ribbon, type=:type WHERE idsp=:idsp";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':imagesp', $imagesp);
-                } else {
-                    $sql="UPDATE sanphams SET namesp=:namesp, dessp=:dessp, price=:price, ribbon=:ribbon, type=:type WHERE idsp=:idsp";
-                    $stmt=$conn->prepare($sql);
-                }
-                $stmt->bindParam(':idsp', $idsp);
-                $stmt->bindParam(':namesp', $namesp);
-                $stmt->bindParam(':dessp', $dessp);
-                $stmt->bindParam(':price', $price);
-                $stmt->bindParam(':ribbon', $ribbon);
-                $stmt->bindParam(':type', $type);
-                $stmt->execute();
+                $sanphams->changeSanpham($idsp, $namesp, $dessp, $price, $ribbon, $type);
     
                 header("Location: product-mng.php");
                 exit();
@@ -90,19 +74,7 @@
             $page = isset($_GET["page"]) ? $_GET["page"] : 1;
             $start = ($page - 1) * $limit;
             
-            if (isset($_GET["search"]) && !empty($_GET["search"])) {
-                $search = $_GET['search'];
-                $sql="SELECT * FROM sanphams WHERE namesp LIKE :search LIMIT :start, :limit";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindValue(':search', '%' . $search . '%');
-            } else {
-                $sql="SELECT * FROM sanphams LIMIT :start, :limit";
-                $stmt=$conn->prepare($sql);
-            }
-            $stmt->bindParam(':start', $start, PDO::PARAM_INT);
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->execute();
-            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            $listSanpham = $sanphams->searchSanphams($start, $limit);
         ?>
         <!-- Content -->
         <div id="content">
@@ -114,7 +86,7 @@
                 <div class="btn-element">
                     <div class="btn btn-add">
                         <i class="fas fa-plus"></i>
-                        <a href="<?php if ($role === "admin") echo "/ĐACS2_NEW/admin/page/add-product.php";?>">Tạo mới sản phẩm</a>
+                        <a href="<?php if ($role === "admin") echo "/ĐACS2_NEW1/admin/page/add-product.php";?>">Tạo mới sản phẩm</a>
                     </div>
                     <div class="btn btn-delete-all">
                         <i class="fas fa-trash"></i>
@@ -161,7 +133,7 @@
                             <th>Chức năng</th>
                         </tr>
                         <?php 
-                            foreach ($result as $row) {
+                            foreach ($listSanpham as $row) {
                                 $image=$row["imagesp"];
                                 $imageinfo=getimagesizefromstring($image);
                                 $mime=$imageinfo['mime'];
@@ -211,13 +183,9 @@
     <?php 
         if (isset($_GET["idsp"])) {
             $idsp=$_GET["idsp"];
+            $listSanpham = $sanphams->getSanphamById($idsp);
         }
-        $sql="SELECT * FROM sanphams WHERE idsp=:idsp";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':idsp', $idsp);
-        $stmt->execute();
-        $result=$stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
+        if ($listSanpham) {
     ?>
     <?php if ($role === "admin") {?>
     <!-- Model edit product -->
@@ -228,45 +196,45 @@
                 <div class="row-edit">
                     <div>
                         <label for="">Mã sản phẩm</label>
-                        <input type="hidden" name="idsp" value="<?php echo $result["idsp"];?>">
-                        <input type="number" disabled name="idsp" value="<?php echo $result["idsp"];?>">
+                        <input type="hidden" name="idsp" value="<?php echo $listSanpham["idsp"];?>">
+                        <input type="number" disabled name="idsp" value="<?php echo $listSanpham["idsp"];?>">
                     </div>
                     <div>
                         <label for="">Tên sản phẩm</label>
-                        <input type="text" name="namesp" required value="<?php echo $result["namesp"]?>">
+                        <input type="text" name="namesp" required value="<?php echo $listSanpham["namesp"]?>">
                     </div>
                     <div>
                         <label for="">Giá bán (VND)</label>
-                        <input type="text" name="price" required value="<?php echo $result["price"]?>">
+                        <input type="text" name="price" required value="<?php echo $listSanpham["price"]?>">
                     </div>
                     <div>
                         <label for="">Loại</label>
                         <select name="ribbon" id="" required>
-                            <option value="hot" <?php if ($result["ribbon"]=="hot") echo 'selected';?>>Hot</option>
-                            <option value="new" <?php if ($result["ribbon"]=="new") echo 'selected';?>>New</option>
-                            <option value="" <?php if ($result["ribbon"]=="") echo 'selected';?>>Không</option>
+                            <option value="hot" <?php if ($listSanpham["ribbon"]=="hot") echo 'selected';?>>Hot</option>
+                            <option value="new" <?php if ($listSanpham["ribbon"]=="new") echo 'selected';?>>New</option>
+                            <option value="" <?php if ($listSanpham["ribbon"]=="") echo 'selected';?>>Không</option>
                         </select>
                     </div>
                     <div>
                         <label for="">Danh mục</label>
                         <select name="type" id="" required>
-                            <option value="bánh mì" <?php if ($result["type"]=="bánh mì") echo 'selected';?>>Bánh mì</option>
-                            <option value="bánh sinh nhật" <?php if ($result["type"]=="bánh sinh nhật") echo 'selected';?>>Bánh sinh nhật</option>
-                            <option value="bánh quy" <?php if ($result["type"]=="bánh quy") echo 'selected';?>>Bánh quy</option>
-                            <option value="bánh tráng miệng" <?php if ($result["type"]=="bánh tráng miệng") echo 'selected';?>>Bánh tráng miệng</option>
-                            <option value="cà rem" <?php if ($result["type"]=="cà rem") echo 'selected';?>>Cà rem</option>
-                            <option value="bánh tươi" <?php if ($result["type"]=="bánh tươi") echo 'selected';?>>Bánh tươi</option>
-                            <option value="sản phẩm đặc trưng" <?php if ($result["type"]=="sản phẩm đặc trưng") echo 'selected';?>>Sản phẩm đặc trưng</option>
-                            <option value="phụ kiện sinh nhật" <?php if ($result["type"]=="phụ kiện sinh nhật") echo 'selected';?>>Phụ kiện sinh nhật</option>
+                            <option value="bánh mì" <?php if ($listSanpham["type"]=="bánh mì") echo 'selected';?>>Bánh mì</option>
+                            <option value="bánh sinh nhật" <?php if ($listSanpham["type"]=="bánh sinh nhật") echo 'selected';?>>Bánh sinh nhật</option>
+                            <option value="bánh quy" <?php if ($listSanpham["type"]=="bánh quy") echo 'selected';?>>Bánh quy</option>
+                            <option value="bánh tráng miệng" <?php if ($listSanpham["type"]=="bánh tráng miệng") echo 'selected';?>>Bánh tráng miệng</option>
+                            <option value="cà rem" <?php if ($listSanpham["type"]=="cà rem") echo 'selected';?>>Cà rem</option>
+                            <option value="bánh tươi" <?php if ($listSanpham["type"]=="bánh tươi") echo 'selected';?>>Bánh tươi</option>
+                            <option value="sản phẩm đặc trưng" <?php if ($listSanpham["type"]=="sản phẩm đặc trưng") echo 'selected';?>>Sản phẩm đặc trưng</option>
+                            <option value="phụ kiện sinh nhật" <?php if ($listSanpham["type"]=="phụ kiện sinh nhật") echo 'selected';?>>Phụ kiện sinh nhật</option>
                         </select>
                     </div>
                     <div>
                         <label for="">Mô tả sản phẩm</label>
-                        <textarea name="dessp" id="" cols="40" rows="4" value="<?php if (isset($result["desp"])) echo $result["desp"]; else echo '';?>"></textarea>
+                        <textarea name="dessp" id="" cols="40" rows="4" value="<?php if (isset($listSanpham["desp"])) echo $listSanpham["desp"]; else echo '';?>"></textarea>
                     </div>
                     <div class="add-imagesp">
                         <?php 
-                            $imagesp=$result["imagesp"];
+                            $imagesp=$listSanpham["imagesp"];
                             $imageinfo=getimagesizefromstring($imagesp);
                             $mime=$imageinfo['mime'];
                             $imagespsrc="data:" .$mime. ";base64," .base64_encode($imagesp);
@@ -279,7 +247,7 @@
                 </div>
                 <div class="save-cancel">   
                     <button type="submit" name="editsp">Lưu lại</button>
-                    <a href="/ĐACS2_NEW/admin/page/product-mng.php">Hủy bỏ</a>
+                    <a href="/ĐACS2_NEW1/admin/page/product-mng.php">Hủy bỏ</a>
                 </div>
             </div>
         </form>
@@ -287,7 +255,7 @@
     <?php }} ?>
 
     <?php } else {
-            header("Location: /ĐACS2_NEW/admin/index.php");
+            header("Location: /ĐACS2_NEW1/admin/index.php");
             exit();
         }
     ?>

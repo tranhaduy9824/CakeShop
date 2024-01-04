@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var newUrl = window.location.origin + window.location.pathname + '?' + urlParams.toString();
       history.pushState(null, null, newUrl);
 
-      xhr.open('POST', '/ĐACS2_NEW/admin/page/partials/handleContact.php?userid=' + userid, true);
+      xhr.open('POST', '/ĐACS2_NEW1/admin/page/partials/sendMessage.php?userid=' + userid, true);
       xhr.responseType = 'json';
 
       xhr.onload = function() {
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var userid = urlParams.get('userid');
 
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/ĐACS2_NEW/admin/page/partials/getLastMessageId.php?userid=" + userid, true);
+    xhr.open("GET", "/ĐACS2_NEW1/admin/page/partials/getLastMessageId.php?userid=" + userid, true);
     xhr.responseType = "json";
 
     xhr.onload = function() {
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var userid = urlParams.get('userid');
 
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/ĐACS2_NEW/admin/page/partials/getMessage.php?userid=" + userid, true);
+    xhr.open("GET", "/ĐACS2_NEW1/admin/page/partials/getMessage.php?userid=" + userid, true);
     xhr.responseType = "json";
 
     xhr.onload = function() {

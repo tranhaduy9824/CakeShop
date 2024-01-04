@@ -11,15 +11,18 @@
 </head>
 <body>
     <?php
-        $server="localhost";    
-        $user="root";
-        $pass="";
-        $db="dacs2";
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
+
+        $bill = new Bill();
+        $sanphams = new Sanphams();
+
+        if (!empty($_GET["search"])) {
+            $search = $_GET["search"];
         }
 
         if (isset($_COOKIE["role"]) && $_COOKIE["role"]==="admin") {
@@ -27,10 +30,7 @@
                 $idbill = $_GET['delete'];
     
                 if (isset($_GET['confirm']) && $_GET['confirm'] === 'true') {
-                    $sql="DELETE FROM bill WHERE idbill=:idbill";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindParam(':idbill', $idbill);
-                    $stmt->execute();
+                    $bill->deleteBill($idbill); 
     
                     header("Location: bill-mng.php");
                     exit();
@@ -41,11 +41,7 @@
         if (isset($_GET["delivery"])) {
             $idbill = $_GET["delivery"];
 
-            $sql = "UPDATE bill SET delivery=:delivery WHERE idbill=:idbill";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindValue(':delivery', "Đã giao");
-            $stmt->bindParam(':idbill', $idbill);
-            $stmt->execute();
+            $bill->updateBill($idbill, "delivery");
     
             header("Location: bill-mng.php");
             exit();
@@ -54,11 +50,7 @@
         if (isset($_GET["status"])) {
             $idbill = $_GET["status"];
 
-            $sql = "UPDATE bill SET status=:status WHERE idbill=:idbill";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindValue(':status', "Đã thanh toán");
-            $stmt->bindParam(':idbill', $idbill);
-            $stmt->execute();
+            $bill->updateBill($idbill, "status");
     
             header("Location: bill-mng.php");
             exit();
@@ -91,57 +83,7 @@
                 $status = "";
             }
             
-            if (!empty($_GET["search"])) {
-                $search = $_GET["search"];
-                if (empty($delivery) && empty($status)) {
-                    $sql = "SELECT * FROM bill WHERE fullname LIKE :search LIMIT :start, :limit";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bindValue(':search', '%' . $search . '%');
-                } else {
-                    $sql = "SELECT * FROM bill WHERE fullname LIKE :search";
-                    if (!empty($delivery)) {
-                        $sql .= " AND delivery = :delivery";
-                    }
-                    if (!empty($status)) {
-                        $sql .= " AND status = :status";
-                    }
-                    $sql .= " LIMIT :start, :limit";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bindValue(':search', '%' . $search . '%');
-                    if (!empty($delivery)) {
-                        $stmt->bindParam(':delivery', $delivery);
-                    }
-                    if (!empty($status)) {
-                        $stmt->bindParam(':status', $status);
-                    }
-                }
-            } else {
-                if (empty($delivery) && empty($status)) {
-                    $sql = "SELECT * FROM bill LIMIT :start, :limit";
-                    $stmt = $conn->prepare($sql);
-                } else {
-                    $sql = "SELECT * FROM bill WHERE 1=1";
-                    if (!empty($delivery)) {
-                        $sql .= " AND delivery = :delivery";
-                    }
-                    if (!empty($status)) {
-                        $sql .= " AND status = :status";
-                    }
-                    $sql .= " LIMIT :start, :limit";
-                    $stmt = $conn->prepare($sql);
-                    if (!empty($delivery)) {
-                        $stmt->bindParam(':delivery', $delivery);
-                    }
-                    if (!empty($status)) {
-                        $stmt->bindParam(':status', $status);
-                    }
-                }
-            }
-            
-            $stmt->bindParam(':start', $start, PDO::PARAM_INT);
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->execute();
-            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            $listBill = $bill->searchBill($start, $limit, $delivery, $status);
         ?>
         <!-- Content -->
         <div id="content">
@@ -216,7 +158,7 @@
                             <th>Chức năng</th>
                         </tr>
                         <?php 
-                            foreach ($result as $row) {
+                            foreach ($listBill as $row) {
                                 echo '<tr>
                                 <td>
                                     <input type="checkbox" class="checkbox-item">
@@ -250,16 +192,13 @@
                     </table>
                 </div>
                 <?php 
-                    $sql="SELECT * FROM bill";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->execute();
-                    $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $listBill = $bill->getBills();
                 ?>
                 <div class="change-page">
-                    <p>Hiện <?php echo $start+1;?> đến <?php if (count($result)>$start+$limit) echo $start+$limit; else echo count($result);?> của <?php echo count($result);?> danh mục</p>
+                    <p>Hiện <?php echo $start+1;?> đến <?php if (count($listBill)>$start+$limit) echo $start+$limit; else echo count($listBill);?> của <?php echo count($listBill);?> danh mục</p>
                     <div class="btn-change">
                         <?php 
-                            for ($i=1;$i<=ceil((count($result)/$limit));$i++) {
+                            for ($i=1;$i<=ceil((count($listBill)/$limit));$i++) {
                                 echo '<div><a class="edit-link" href="bill-mng.php?page=' .$i. '">' .$i. '</a></div>';
                             }
                         ?>
@@ -272,19 +211,16 @@
     <?php 
         if (isset($_GET["idbill"])) {
             $idbill=$_GET["idbill"];
+
+            $listBill = $bill->getBillById($idbill);
         }
-        $sql="SELECT * FROM bill WHERE idbill=:idbill";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':idbill', $idbill);
-        $stmt->execute();
-        $result=$stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
+        if ($listBill) {
     ?>
 
     <!-- Model more info bill -->
     <div id="model-more-info">
         <div class="box-more">
-            <h5>ID đơn hàng <?php echo $result["idbill"];?>: <?php echo $result["fullname"];?></h5>
+            <h5>ID đơn hàng <?php echo $listBill["idbill"];?>: <?php echo $listBill["fullname"];?></h5>
             <div class="row-more">
                 <table>
                     <tr>
@@ -292,7 +228,7 @@
                         <th>Số lượng</th>
                     </tr>
                     <?php  
-                        $str = $result["sanphams"];
+                        $str = $listBill["sanphams"];
                         $numbers = explode(", ", $str);
                         $count = count($numbers);
                         foreach ($numbers as $index => $number) {
@@ -302,13 +238,9 @@
                             $parts = explode("-", $number);
                             $idsp = $parts[0];
                             $countsp = $parts[1];
-                            $sql1="SELECT  * FROM sanphams WHERE idsp=:idsp";
-                            $stmt1=$conn->prepare($sql1);
-                            $stmt1->bindParam(':idsp', $idsp);
-                            $stmt1->execute();
-                            $result1=$stmt1->fetch(PDO::FETCH_ASSOC);
+                            $listSanpham = $sanphams->getSanphamById($idsp);
                             echo '<tr>';
-                            echo '<td>' .$result1["namesp"]. '</td>';
+                            echo '<td>' .$listSanpham["namesp"]. '</td>';
                             echo '<td>' .$countsp. '</td>';
                             echo '</tr>';
                         }
@@ -316,14 +248,14 @@
                 </table>
             </div>
             <div class="exit">   
-                <a href="/ĐACS2_NEW/admin/page/bill-mng.php">Thoát</a>
+                <a href="/ĐACS2_NEW1/admin/page/bill-mng.php">Thoát</a>
             </div>
         </div>
     </div>
     <?php } ?>
 
     <?php } else {
-            header("Location: /ĐACS2_NEW/admin/index.php");
+            header("Location: /ĐACS2_NEW1/admin/index.php");
             exit();
         } 
     ?>

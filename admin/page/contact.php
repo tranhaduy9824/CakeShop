@@ -11,21 +11,22 @@
 </head>
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
+
+        $users = new Users();
+        $messages = new Messages();
 
         if (isset($_COOKIE["adminid"])) {
             $adminid=$_COOKIE["adminid"];
         }
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
+        if (isset($_GET["search"]) && !empty($_GET["search"])) {
+            $search=$_GET["search"];
         }
     ?>
 
@@ -38,24 +39,15 @@
         <?php 
             if (isset($_GET["search"]) && !empty($_GET["search"])) {
                 $search=$_GET["search"];
-                $sql1="SELECT * FROM users WHERE fullname LIKE :fullname";
-                $stmt1=$conn->prepare($sql1);
-                $stmt1->bindValue(':fullname', '%' . $search . '%');
-                $stmt1->execute();
-                $result1=$stmt1->fetchAll(PDO::FETCH_ASSOC);
+                
+                $listUser = $messages->searchUsers($search);
 
-                foreach ($result1 as $row) {
-                    $sql="SELECT * FROM messages WHERE senderid=:senderid";
-                    $stmt=$conn->prepare($sql);
-                    $stmt->bindValue(':senderid', $row["userid"]);
+                foreach ($listUser as $row) {
+                    $listMessage = $messages->getMessagesBySenderId($row["userid"]);
                 }
             } else {
-                $sql="SELECT * FROM messages WHERE roleSender=:roleSender";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindValue(':roleSender', "user");
+                $listMessage = $messages->getMessagesByRoleSender();
             }
-            $stmt->execute();
-            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
         ?>
         <!-- Content -->
         <div id="content">
@@ -70,9 +62,9 @@
                     <div class="list-user">
                         <?php 
                             $listUserSend = [];
-                            if ($result) {
+                            if ($listMessage) {
                                 $foundUser = false;
-                                foreach ($result as $row) {
+                                foreach ($listMessage as $row) {
                                     if (isset($row["roleSender"]) && $row["roleSender"] == "user") {
                                         $foundUser = true;
                                         if (!in_array($row["senderid"], $listUserSend)) {
@@ -88,24 +80,16 @@
                             }
                             foreach ($listUserSend as $key => $userSendID) {
                                 $userid = $userSendID;
-                                $sql="SELECT * FROM users WHERE userid=:userid";
-                                $stmt=$conn->prepare($sql);
-                                $stmt->bindParam(':userid', $userid);
-                                $stmt->execute();
-                                $result=$stmt->fetch(PDO::FETCH_ASSOC);
+                                
+                                $listUser = $users->getUserById($userid);
 
-                                $sql2 = "SELECT * FROM messages WHERE senderid=:senderid or receiverid=:receiverid ORDER BY timestamp DESC LIMIT 1";
-                                $stmt2 = $conn->prepare($sql2);
-                                $stmt2->bindParam(':senderid', $userid);
-                                $stmt2->bindParam(':receiverid', $userid);
-                                $stmt2->execute();
-                                $lastMessage = $stmt2->fetch(PDO::FETCH_ASSOC);
+                                $lastMessage = $messages->getLastMessage($userid);
                                 echo '<div class="item-user">
-                                        <input hidden type="text" value="' .$result["userid"]. '" name="userid">';
-                                        if (empty($result["avt"])) {
+                                        <input hidden type="text" value="' .$listUser["userid"]. '" name="userid">';
+                                        if (empty($listUser["avt"])) {
                                             echo '<img src="/ĐACS2/user/assets/img/avtmacdinh.jpg" alt="">'; 
                                         } else {
-                                            $avt=$result["avt"];
+                                            $avt=$listUser["avt"];
                                             $infoavt = getimagesizefromstring($avt);
                                             if (!empty($infoavt['mime'])) {
                                                 $mime = $infoavt['mime'];
@@ -114,7 +98,7 @@
                                             echo '<img src="' .$avtsrc. '" alt="">';
                                         }
                                         echo '<div class="info-user">
-                                            <p><b>' .$result["fullname"]. '</b></p>';
+                                            <p><b>' .$listUser["fullname"]. '</b></p>';
                                             if ($lastMessage) {
                                                 if ($lastMessage["roleSender"] == "user") {
                                                     echo '<p class="new-mess">' . $lastMessage["content"] . '</p>';
@@ -133,27 +117,18 @@
                     if (isset($_GET["userid"])) {
                         $userid=$_GET["userid"];
 
-                        $sql="SELECT * FROM messages WHERE senderid=:senderid or receiverid=:receiverid";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':senderid', $userid);
-                        $stmt->bindParam(':receiverid', $userid);
-                        $stmt->execute();
-                        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $listMessage = $messages->getMessages($userid);
 
-                        $sql1="SELECT * FROM users WHERE userid=:userid";
-                        $stmt1=$conn->prepare($sql1);
-                        $stmt1->bindParam(':userid', $userid);
-                        $stmt1->execute();
-                        $result1=$stmt1->fetch(PDO::FETCH_ASSOC);
+                        $listUser = $users->getUserById($userid);
                 ?>
                 <div class="content-right">
                     <div class="info-user-send">
                         <div class="info-user">
                             <?php 
-                                if (empty($result1["avt"])) {
+                                if (empty($listUser["avt"])) {
                                     echo '<img src="/ĐACS2/user/assets/img/avtmacdinh.jpg" alt="">'; 
                                 } else {
-                                    $avt=$result1["avt"];
+                                    $avt=$listUser["avt"];
                                     $infoavt = getimagesizefromstring($avt);
                                     if (!empty($infoavt['mime'])) {
                                         $mime = $infoavt['mime'];
@@ -162,7 +137,7 @@
                                     echo '<img src="' .$avtsrc. '" alt="">';
                                 }
                             ?>
-                            <h4><?php echo $result1["fullname"];?></h4>
+                            <h4><?php echo $listUser["fullname"];?></h4>
                         </div>
                         <div class="more-btn">
                             <i class="fas fa-ellipsis-h"></i>
@@ -171,10 +146,10 @@
                     <div class="box-chat">
                         <div class="info-user">
                             <?php 
-                                if (empty($result1["avt"])) {
+                                if (empty($listUser["avt"])) {
                                     echo '<img src="/ĐACS2/user/assets/img/avtmacdinh.jpg" alt="">'; 
                                 } else {
-                                    $avt=$result1["avt"];
+                                    $avt=$listUser["avt"];
                                     $infoavt = getimagesizefromstring($avt);
                                     if (!empty($infoavt['mime'])) {
                                         $mime = $infoavt['mime'];
@@ -183,11 +158,11 @@
                                     echo '<img src="' .$avtsrc. '" alt="">';
                                 }
                             ?>
-                            <h4><?php echo $result1["fullname"];?></h4>
+                            <h4><?php echo $listUser["fullname"];?></h4>
                         </div>
                         <div class="content-chat">
                             <?php 
-                                foreach ($result as $row) {
+                                foreach ($listMessage as $row) {
                                     if ($row["roleSender"]!=="user") {
                                         echo '<div class="send">'.$row["content"]. '</div>';
                                     } else {
@@ -227,7 +202,7 @@
     </div>
     <?php 
         } else {
-            header("Location: /ĐACS2_NEW/admin/index.php");
+            header("Location: /ĐACS2_NEW1/admin/index.php");
             exit();
         }
     ?>

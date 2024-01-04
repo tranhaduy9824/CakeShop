@@ -14,7 +14,7 @@
         setcookie('password', '', time() - 3600, '/');
         setcookie('phone', '', time() - 3600, '/');
         setcookie('status', '', time() - 3600, '/');
-        header("Location: /ĐACS2_NEW/user/index.php");
+        header("Location: /ĐACS2_NEW1/user/index.php");
         exit();
     ?>
 </body>

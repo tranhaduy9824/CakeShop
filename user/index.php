@@ -6,10 +6,10 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/menu.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/footer.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/cart.css">
-    <link rel="stylesheet" href="/ĐACS2_NEW/user/assets/css/contact.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/menu.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/footer.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/cart.css">
+    <link rel="stylesheet" href="/ĐACS2_NEW1/user/assets/css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
     <link
@@ -20,10 +20,18 @@
 </head> 
 <body>
     <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+        require_once 'classes/connectMySql.php';
+        require_once 'classes/users.php';
+        require_once 'classes/carts.php';
+        require_once 'classes/comments.php';
+        require_once 'classes/sanphams.php';
+        require_once 'classes/bill.php';
+        require_once 'classes/messages.php';
+
+        $users = new Users();
+        $sanphams = new Sanphams();
+        $comments = new Comments();
+        $carts = new Carts();
 
         if (isset($_COOKIE["userid"])){
             $userid=$_COOKIE["userid"];
@@ -33,51 +41,37 @@
             $avt=$_COOKIE["avt"];
         }
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if ($_SERVER["REQUEST_METHOD"]="POST" && isset($_POST["add-comment"])) {
+            if (isset($_COOKIE["userid"])) {
+                if ($_COOKIE["status"]==0) {
+                    $content=$_POST['comment'];
 
-            if ($_SERVER["REQUEST_METHOD"]="POST" && isset($_POST["add-comment"])) {
-                if (isset($_COOKIE["userid"])) {
-                    if ($_COOKIE["status"]==0) {
-                        $content=$_POST['comment'];
+                    $comments->setComment($userid, $content);
 
-                        $sql="INSERT INTO comments (userid, content) VALUES (:userid, :content)";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':userid', $userid);
-                        $stmt->bindParam(':content', $content);
-                        $stmt->execute();
-                        header("Location: index.php");
-                        exit();
-                    } else {
-                        echo '<script>alert("Tài khoản của bạn đã bị chặn");</script>';
-                    }
-                }
-                else {
-                    echo '<script>alert("Vui lòng đăng nhập"); window.location.href = "loginregister.php";</script>';
+                    header("Location: index.php");
+                    exit();
+                } else {
+                    echo '<script>alert("Tài khoản của bạn đã bị chặn");</script>';
                 }
             }
-
-            if (isset($_GET['delete-comment'])) {
-                $idcomment=$_GET['delete-comment'];
-
-                $sql="DELETE FROM comments WHERE idcomment=:idcomment";
-                $stmt=$conn->prepare($sql);
-                $stmt->bindParam(':idcomment', $idcomment);
-                $stmt->execute();
+            else {
+                echo '<script>alert("Vui lòng đăng nhập"); window.location.href = "loginregister.php";</script>';
             }
-        } catch (PDOException $e) {
-            echo "Lỗi" .$e->getMessage();
         }
-        $sql="SELECT * FROM carts WHERE userid=:userid";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindParam(':userid', $userid);
-        $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['delete-comment'])) {
+            $idcomment=$_GET['delete-comment'];
+
+            $comments->deleteCommentbyId($idcomment);
+        }
+
         $opendetailcart=0;
-        
-        if (count($result)>0) {
-            $opendetailcart=count($result);
+        if  (isset($userid)) {
+            $listCart = $carts->getCartByUserId($userid);
+            
+            if (count($listCart)>0) {
+                $opendetailcart=count($listCart);
+            }
         }
     ?>
 
@@ -87,66 +81,37 @@
     <!-- Main -->
     <div id="main">
         <!-- Sản phẩm mới -->
+        <?php 
+            $listSanpham = $sanphams->get4Sanphams();
+        ?>
         <div id="newsp">
             <h2 class="title">Sản phẩm mới</h2>
             <img src="./assets/img/Gioithieu.png" alt="">
             <div class="sliders-newsp">
+                <?php 
+                    foreach ($listSanpham as $row) {
+                ?>
                 <div class="slider">
                     <div class="item">
-                        <a href="">Flan</a>
-                        <div class="price">
-                            12,000 VND
-                        </div>
+                        <a href=""><?php echo $row["namesp"];?></a>
+                        <div class="price"><?php echo $row["price"];?></div>
                         <div class="link">
-                            <a href="">Xem chi tiết</a>
+                            <a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=<?php echo $row["idsp"];?>">Xem chi tiết</a>
                         </div>
                     </div>
                     <div class="img-item">
-                        <img src="./assets/img/Home/Sản phẩm mới/flan.jpg" alt="">
+                        <div class="img">
+                            <?php 
+                                $image=$row["imagesp"];
+                                $imageinfo=getimagesizefromstring($image);
+                                $mime=$imageinfo['mime'];
+                                $imagesrc='data:' .$mime. ';base64,' .base64_encode($image);
+                                echo '<img src="' .$imagesrc. '"/>';
+                            ?>
+                        </div>
                     </div>
                 </div>
-                <div class="slider">
-                    <div class="item">
-                        <a href="">Bánh mì que cấp đông</a>
-                        <div class="price">
-                            49,000 VND
-                        </div>
-                        <div class="link">
-                            <a href="">Xem chi tiết</a>
-                        </div>
-                    </div>
-                    <div class="img-item">
-                        <img src="./assets/img/Home/Sản phẩm mới/banhmique.jpg" alt="">
-                    </div>
-                </div>
-                <div class="slider">
-                    <div class="item">
-                        <a href="">Su kem</a>
-                        <div class="price">
-                            33,000 VND
-                        </div>
-                        <div class="link">
-                            <a href="">Xem chi tiết</a>
-                        </div>
-                    </div>
-                    <div class="img-item">
-                        <img src="./assets/img/Home/Sản phẩm mới/sukem.jpg" alt="">
-                    </div>
-                </div>
-                <div class="slider">
-                    <div class="item">
-                        <a href="">Kem chuối dừa</a>
-                        <div class="price">
-                            15,000 VND
-                        </div>
-                        <div class="link">
-                            <a href="">Xem chi tiết</a>
-                        </div>
-                    </div>
-                    <div class="img-item">
-                        <img src="./assets/img/Home/Sản phẩm mới/kemchuoidua.jpg" alt="">
-                    </div>
-                </div>
+                <?php } ?>
             </div>
         </div>
 
@@ -164,16 +129,12 @@
                 <div class="sliders-hot">
                     <?php 
                         $ribbon='hot';
-                        $sql="SELECT * FROM sanphams WHERE ribbon=:ribbon";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':ribbon', $ribbon);
-                        $stmt->execute();
-                        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $listSanpham = $sanphams->getSanphamByRibbon($ribbon);
 
-                        foreach ($result as $row) {
+                        foreach ($listSanpham as $row) {
                             echo '<div class="sanpham">';
                             echo '<div class="img">';
-                                echo '<a href="/ĐACS2_NEW/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">';
+                                echo '<a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">';
                                     $image=$row["imagesp"];
                                     $imageinfo=getimagesizefromstring($image);
                                     $mime=$imageinfo['mime'];
@@ -183,13 +144,13 @@
                             echo '</div>';
                             echo '<div class="name">';
                                 echo '<h3>';
-                                    echo '<a href="/ĐACS2_NEW/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">' .$row["namesp"]. '</a>';
+                                    echo '<a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">' .$row["namesp"]. '</a>';
                                 echo '</h3>';
                             echo '</div>';
                             echo '<div class="des">' .$row["dessp"]. '</div>';
                             echo '<div class="price">' .$row["price"]. '</div>';
                             echo '<div class="link">';
-                                echo '<a href="/ĐACS2_NEW/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">Xem chi tiết</a>';
+                                echo '<a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">Xem chi tiết</a>';
                             echo '</div>';
                             echo '<div class="ribbon ' .$row["ribbon"]. '">' .$row["ribbon"]. '</div>';
                         echo '</div>';
@@ -199,16 +160,12 @@
                 <div class="sliders-new">
                     <?php 
                         $ribbon='new';
-                        $sql="SELECT * FROM sanphams WHERE ribbon=:ribbon";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->bindParam(':ribbon', $ribbon);
-                        $stmt->execute();
-                        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $listSanpham = $sanphams->getSanphamByRibbon($ribbon);
 
-                        foreach ($result as $row) {
+                        foreach ($listSanpham as $row) {
                             echo '<div class="sanpham">';
                             echo '<div class="img">';
-                                echo '<a href="/ĐACS2_NEW/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">';
+                                echo '<a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">';
                                     $image=$row["imagesp"];
                                     $imageinfo=getimagesizefromstring($image);
                                     $mime=$imageinfo['mime'];
@@ -218,13 +175,13 @@
                             echo '</div>';
                             echo '<div class="name">';
                                 echo '<h3>';
-                                    echo '<a href="/ĐACS2_NEW/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">' .$row["namesp"]. '</a>';
+                                    echo '<a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">' .$row["namesp"]. '</a>';
                                 echo '</h3>';
                             echo '</div>';
                             echo '<div class="des">' .$row["dessp"]. '</div>';
                             echo '<div class="price">' .$row["price"]. '</div>';
                             echo '<div class="link">';
-                                echo '<a href="/ĐACS2_NEW/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">Xem chi tiết</a>';
+                                echo '<a href="/ĐACS2_NEW1/user/handle/infosanpham.php?idsp=' .$row["idsp"]. '">Xem chi tiết</a>';
                             echo '</div>';
                             echo '<div class="ribbon ' .$row["ribbon"]. '">' .$row["ribbon"]. '</div>';
                         echo '</div>';
@@ -362,17 +319,13 @@
                 <div class="send-comment">
                     <?php 
                         if (isset($userid)) {
-                            $sql="SELECT * FROM users WHERE userid=:userid";
-                            $stmt=$conn->prepare($sql);
-                            $stmt->bindParam(':userid', $userid);
-                            $stmt->execute();
-                            $result=$stmt->fetch(PDO::FETCH_ASSOC);
+                            $user = $users->getUserByUserId($userid);
 
                             echo '<div class="avt-comment">';
-                            if (empty($result["avt"])) {
+                            if (empty($user["avt"])) {
                                 echo '<img src="./assets/img/avtmacdinh.jpg" alt="">'; 
                             } else {
-                                $avt=$result["avt"];
+                                $avt=$user["avt"];
                                 $infoavt = getimagesizefromstring($avt);
                                 if (!empty($infoavt['mime'])) {
                                     $mime = $infoavt['mime'];
@@ -392,26 +345,19 @@
                 </div>
                 <div class="list-comment">
                     <?php 
-                        $sql="SELECT * FROM comments ORDER BY created_at DESC";
-                        $stmt=$conn->prepare($sql);
-                        $stmt->execute();
-                        $result1=$stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $listComment = $comments->getComments();
 
-                        if (count($result1)>0) {
+                        if (count($listComment)>0) {
                             echo '<table>';
-                            foreach ($result1 as $row) {
+                            foreach ($listComment as $row) {
                                 $userid2=$row["userid"];
-                                $sql2="SELECT * FROM users WHERE userid=:userid";
-                                $stmt2=$conn->prepare($sql2);
-                                $stmt2->bindParam(':userid', $userid2);
-                                $stmt2->execute();
-                                $result2=$stmt2->fetch(PDO::FETCH_ASSOC);
+                                $listUser = $users->getUserByUserId($userid2);
                                 echo '<tr>';
-                                if (empty($result2["avt"])) {
+                                if (empty($listUser["avt"])) {
                                     echo '<td rowspan="2"><img src="./assets/img/avtmacdinh.jpg" alt=""></td>'; 
                                 } 
                                 else {
-                                    $avt=$result2["avt"];
+                                    $avt=$listUser["avt"];
                                     $infoavt = getimagesizefromstring($avt);
                                     if (!empty($infoavt['mime'])) {
                                         $mime = $infoavt['mime'];
@@ -419,7 +365,7 @@
                                     $avtsrc='data:' .$mime. ';base64,' .base64_encode($avt);
                                     echo '<td rowspan="2"><img src="' .$avtsrc. '" alt=""></td>'; 
                                 }
-                                echo '<td class="name-comment">' .$result2["fullname"]. '</td>'; 
+                                echo '<td class="name-comment">' .$listUser["fullname"]. '</td>'; 
                                 echo '<td rowspan="2" class="time-comment">' .$row["updated_at"]. '</td>'; 
                                 if (isset($userid)) {
                                     if ($userid==$userid2) {
@@ -467,7 +413,7 @@
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"
     ></script>
-    <script src="/ĐACS2_NEW/user/contact.js"></script>
+    <script src="/ĐACS2_NEW1/user/contact.js"></script>
     <script src="./main.js"></script>
 </body>
 </html>

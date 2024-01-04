@@ -10,19 +10,15 @@
     <link rel="stylesheet" href="./assets/themify-icons/themify-icons.css">
 </head>
 <body>
-    <?php 
-        $server="localhost";
-        $user="root";
-        $pass="";
-        $db="dacs2";
+    <?php
+        require_once '../classes/connectMySql.php';
+        require_once '../classes/admins.php';
+        require_once '../classes/users.php';
+        require_once '../classes/bill.php';
+        require_once '../classes/messages.php';
+        require_once '../classes/sanphams.php';
 
-        try {
-            $conn=new PDO("mysql:host=$server;dbname=$db", $user, $pass);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $e) {
-            echo "Lỗi: " .$e->getMessage();
-        }
+        $sanphams = new Sanphams();
 
         if ($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["addsp"])) {
             $idsp=$_POST["idsp"];
@@ -33,16 +29,7 @@
             $dessp=$_POST["dessp"];
             $imagesp=file_get_contents($_FILES['imagesp']['tmp_name']);
 
-            $sql="INSERT INTO sanphams (idsp, imagesp, namesp, dessp, price, ribbon, type) VALUES (:idsp, :imagesp, :namesp, :dessp, :price, :ribbon, :type)";
-            $stmt=$conn->prepare($sql);
-            $stmt->bindParam(':idsp', $idsp);
-            $stmt->bindParam(':imagesp', $imagesp);
-            $stmt->bindParam(':namesp', $namesp);
-            $stmt->bindParam(':dessp', $dessp);
-            $stmt->bindParam(':price', $price);
-            $stmt->bindParam(':ribbon', $ribbon);
-            $stmt->bindParam(':type', $type);
-            $stmt->execute();
+            $sanphams->setSanpham($idsp, $imagesp, $namesp, $dessp, $price, $ribbon, $type);
 
             echo '<script>
             alert("Thêm sản phẩm thành công");
@@ -114,7 +101,7 @@
                     </div>
                     <div class="save-cancel">
                         <button type="submit" name="addsp">Lưu lại</button>
-                        <a href="/ĐACS2_NEW/admin/page/product-mng.php">Hủy bỏ</a>
+                        <a href="/ĐACS2_NEW1/admin/page/product-mng.php">Hủy bỏ</a>
                     </div>
                 </form>
             </div>
@@ -122,7 +109,7 @@
     </div>
     <?php 
         } else {
-            header("Location: /ĐACS2_NEW/admin/index.php");
+            header("Location: /ĐACS2_NEW1/admin/index.php");
             exit();
         }
     ?>
