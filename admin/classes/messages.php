@@ -38,7 +38,7 @@
         }
 
         public function getMessagesBySenderId($userid) {
-            $sql="SELECT * FROM messages WHERE senderid=:senderid";
+            $sql="SELECT * FROM messages WHERE senderid=:senderid ORDER BY senderid DESC";
             $stmt=$this->conn->prepare($sql);
             $stmt->bindValue(':senderid', $userid);
             $stmt->execute();
@@ -46,7 +46,7 @@
         }
 
         public function getMessagesByRoleSender() {
-            $sql="SELECT * FROM messages WHERE roleSender=:roleSender";
+            $sql="SELECT * FROM messages WHERE roleSender=:roleSender ORDER BY senderid DESC";
             $stmt=$this->conn->prepare($sql);
             $stmt->bindValue(':roleSender', "user");
             $stmt->execute();

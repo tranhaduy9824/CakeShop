@@ -32,6 +32,7 @@
                 echo '<img src="' .$avtsrc. '" alt="">';
             }
         ?>
+        <p style="text-transform: capitalize;"><b><?php echo ($listAdmin["role"]==="admin") ? "Quản lý" : "Nhân viên"?></b></p>
         <p><b><?php echo $listAdmin["fullname"];?></b></p>
         <p>Chúc mừng bạn trở lại</p>
     </div>
